@@ -12,6 +12,7 @@ import { AdminDashboard } from "./pages/admin/AdminDashboard";
 import { LeadManagement } from "./pages/admin/LeadManagement";
 import { ApplicationDetails } from "./pages/admin/ApplicationDetails";
 import { RepaymentApprovals } from "./pages/admin/RepaymentApprovals";
+import { AdminSetup } from "./pages/auth/AdminSetup";
 
 function App() {
   return (
@@ -31,6 +32,7 @@ function App() {
           <Route path={ROUTES.ADMIN_LEADS} element={<LeadManagement />} />
           <Route path={`${ROUTES.ADMIN_LEADS}/:id`} element={<ApplicationDetails />} />
           <Route path={ROUTES.ADMIN_REPAYMENTS} element={<RepaymentApprovals />} />
+          <Route path="/setup-admin" element={<AdminSetup />} />
         </Routes>
         <ToastContainer position="top-right" autoClose={3000} />
       </AuthProvider>

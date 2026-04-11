@@ -11,7 +11,7 @@ import { toast } from "react-toastify";
 import { Landmark } from "lucide-react";
 
 export function AdminLayout({ children }: { children: ReactNode }) {
-  const { user, loading } = useAuth();
+  const { user, loading, refreshUser } = useAuth();
   
   // Login State
   const [email, setEmail] = useState("");
@@ -24,8 +24,8 @@ export function AdminLayout({ children }: { children: ReactNode }) {
     setLoginLoading(true);
     try {
       await signInWithEmailAndPassword(auth, email, password);
-      // Let AuthContext handle user role fetching. 
-      // Note: Must ensure user registered via database has role "admin"
+      // Force refresh the user data to ensure the 'admin' role is loaded
+      await refreshUser();
       toast.success("Logged in successfully!");
     } catch (error: any) {
       toast.error(error.message || "Invalid credentials");
