@@ -1,14 +1,8 @@
 import { createContext, useContext, useEffect, useState, ReactNode } from "react";
 import { type User, onAuthStateChanged, signOut } from "firebase/auth";
-import { auth, db } from "../firebase/config";
-import { doc, getDoc } from "firebase/firestore";
-
-interface AppUser {
-  uid: string;
-  email: string | null;
-  phoneNumber: string | null;
-  role: "user" | "admin";
-}
+import { auth } from "../lib/firebase/config";
+import { getUser } from "../lib/services/user.service";
+import type { AppUser } from "../lib/models/user.model";
 
 interface AuthContextType {
   user: AppUser | null;
@@ -27,30 +21,20 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const fetchUserData = async (uid: string) => {
     try {
-      const userDoc = await getDoc(doc(db, "users", uid));
-      if (userDoc.exists()) {
-        const userData = userDoc.data();
-        setUser({
-          uid,
-          email: userData.email || null,
-          phoneNumber: userData.phoneNumber || null,
-          role: userData.role || "user",
-        });
-      } else {
-        setUser({
-          uid,
-          email: null,
-          phoneNumber: null,
-          role: "user",
-        });
-      }
+      const userData = await getUser(uid);
+      setUser(userData ?? { uid, email: null, phoneNumber: null, role: "user" });
     } catch (error) {
       console.error("Error fetching user data:", error);
     }
   };
 
   useEffect(() => {
+    // Safety net: if Firebase never calls back (misconfigured / offline),
+    // stop blocking the UI after 8 seconds.
+    const timeout = setTimeout(() => setLoading(false), 8000);
+
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
+      clearTimeout(timeout);
       setFirebaseUser(currentUser);
       if (currentUser) {
         await fetchUserData(currentUser.uid);
@@ -60,17 +44,16 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       setLoading(false);
     });
 
-    return () => unsubscribe();
+    return () => {
+      clearTimeout(timeout);
+      unsubscribe();
+    };
   }, []);
 
-  const logout = async () => {
-    await signOut(auth);
-  };
+  const logout = () => signOut(auth);
 
   const refreshUser = async () => {
-    if (firebaseUser) {
-      await fetchUserData(firebaseUser.uid);
-    }
+    if (firebaseUser) await fetchUserData(firebaseUser.uid);
   };
 
   return (
@@ -82,8 +65,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
 export const useAuth = () => {
   const context = useContext(AuthContext);
-  if (context === undefined) {
-    throw new Error("useAuth must be used within an AuthProvider");
-  }
+  if (!context) throw new Error("useAuth must be used within an AuthProvider");
   return context;
 };

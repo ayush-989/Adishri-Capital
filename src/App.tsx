@@ -1,37 +1,43 @@
-import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "./context/AuthContext";
 import { ToastContainer } from "react-toastify";
 import { ROUTES } from "./utils/constants";
 
-// Pages
-import { Home } from "./pages/Home";
-import { Dashboard as UserDashboard } from "./pages/user/Dashboard";
-import { LoanApplicationForm } from "./pages/user/LoanApplicationForm";
-import { ProcessingFee } from "./pages/user/ProcessingFee";
-import { AdminDashboard } from "./pages/admin/AdminDashboard";
-import { LeadManagement } from "./pages/admin/LeadManagement";
-import { ApplicationDetails } from "./pages/admin/ApplicationDetails";
-import { RepaymentApprovals } from "./pages/admin/RepaymentApprovals";
-import { AdminSetup } from "./pages/auth/AdminSetup";
+// User & Public Pages
+import { Home } from "./features/user/pages/Home";
+import { Dashboard as UserDashboard } from "./features/user/pages/Dashboard";
+import { LoanApplicationForm } from "./features/user/pages/LoanApplicationForm";
+import { ProcessingFee } from "./features/user/pages/ProcessingFee";
+
+// Admin Pages
+import { AdminDashboard } from "./features/admin/pages/AdminDashboard";
+import { LeadManagement } from "./features/admin/pages/LeadManagement";
+import { ApplicationDetails } from "./features/admin/pages/ApplicationDetails";
+import { RepaymentApprovals } from "./features/admin/pages/RepaymentApprovals";
+
+// Auth Pages
+import { AdminSetup } from "./features/auth/pages/AdminSetup";
 
 function App() {
   return (
     <Router>
       <AuthProvider>
         <Routes>
-          {/* Public Routes */}
+          {/* Public */}
           <Route path={ROUTES.HOME} element={<Home />} />
 
-          {/* User Routes (No auth required) */}
+          {/* User */}
           <Route path={ROUTES.USER_DASHBOARD} element={<UserDashboard />} />
           <Route path={ROUTES.LOAN_APPLICATION} element={<LoanApplicationForm />} />
           <Route path={ROUTES.PROCESSING_FEE} element={<ProcessingFee />} />
 
-          {/* Admin Routes (Auth handled by AdminLayout inwardly) */}
+          {/* Admin — auth guard is inside AdminLayout */}
           <Route path={ROUTES.ADMIN_DASHBOARD} element={<AdminDashboard />} />
           <Route path={ROUTES.ADMIN_LEADS} element={<LeadManagement />} />
           <Route path={`${ROUTES.ADMIN_LEADS}/:id`} element={<ApplicationDetails />} />
           <Route path={ROUTES.ADMIN_REPAYMENTS} element={<RepaymentApprovals />} />
+
+          {/* Setup */}
           <Route path="/setup-admin" element={<AdminSetup />} />
         </Routes>
         <ToastContainer position="top-right" autoClose={3000} />
