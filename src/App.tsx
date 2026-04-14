@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider } from "./context/AuthContext";
 import { ToastContainer } from "react-toastify";
 import { ROUTES } from "./utils/constants";
@@ -39,6 +39,9 @@ function App() {
 
           {/* Setup */}
           <Route path="/setup-admin" element={<AdminSetup />} />
+
+          {/* Catch-all — redirect any unknown route to home */}
+          <Route path="*" element={<Navigate to={ROUTES.HOME} replace />} />
         </Routes>
         <ToastContainer position="top-right" autoClose={3000} />
       </AuthProvider>
