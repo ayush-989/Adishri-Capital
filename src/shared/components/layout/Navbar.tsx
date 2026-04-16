@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { useAuth } from "../../../hooks/useAuth";
-import { Landmark, User as UserIcon, Menu, X } from "lucide-react";
+import { Landmark, Menu, X } from "lucide-react";
 import { ROUTES } from "../../../utils/constants";
 
 const NAV_LINKS = [
@@ -13,10 +13,10 @@ const NAV_LINKS = [
 export function Navbar() {
   const { user } = useAuth();
   const location = useLocation();
-  const [mobileOpen, setMobileOpen] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
 
   return (
-    <nav className="sticky top-0 z-40 w-full bg-white/90 backdrop-blur-lg border-b border-slate-200/70 shadow-sm">
+    <nav className="sticky top-0 z-40 w-full bg-white/90 backdrop-blur-lg border-b border-slate-200/70 shadow-sm relative">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-16 items-center">
           {/* Logo */}
@@ -29,39 +29,28 @@ export function Navbar() {
             </span>
           </Link>
 
-          {/* Desktop right side */}
-          {user && (
-            <Link
-              to={ROUTES.ADMIN_DASHBOARD}
-              className="hidden sm:flex items-center gap-2 text-sm font-medium text-slate-700 hover:text-blue-600 border border-slate-200 px-3 py-1.5 rounded-lg bg-white transition-colors"
-            >
-              <UserIcon size={16} />
-              Admin Panel
-            </Link>
-          )}
-
-          {/* Mobile Hamburger */}
+          {/* Hamburger — always visible */}
           <button
-            className="sm:hidden p-2 rounded-lg text-slate-600 hover:bg-slate-100 transition-colors"
-            onClick={() => setMobileOpen(!mobileOpen)}
+            className="p-2 rounded-lg text-slate-600 hover:bg-slate-100 transition-colors"
+            onClick={() => setMenuOpen(!menuOpen)}
             aria-label="Toggle menu"
           >
-            {mobileOpen ? <X size={22} /> : <Menu size={22} />}
+            {menuOpen ? <X size={22} /> : <Menu size={22} />}
           </button>
         </div>
       </div>
 
-      {/* Mobile Drawer */}
-      {mobileOpen && (
-        <div className="sm:hidden bg-white border-t border-slate-100 px-4 pb-4 pt-2 space-y-1 shadow-lg">
+      {/* Dropdown Menu */}
+      {menuOpen && (
+        <div className="absolute top-16 right-0 w-56 bg-white border border-slate-200 rounded-xl shadow-xl px-2 py-2 z-50 mr-4">
           {NAV_LINKS.map((link) => {
             const isActive = location.pathname === link.href;
             return (
               <Link
                 key={link.href}
                 to={link.href}
-                onClick={() => setMobileOpen(false)}
-                className={`block px-4 py-3 rounded-xl text-sm font-medium transition-colors ${
+                onClick={() => setMenuOpen(false)}
+                className={`block px-4 py-2.5 rounded-lg text-sm font-medium transition-colors ${
                   isActive
                     ? "bg-blue-50 text-blue-700"
                     : "text-slate-700 hover:bg-slate-50"
@@ -74,10 +63,9 @@ export function Navbar() {
           {user && (
             <Link
               to={ROUTES.ADMIN_DASHBOARD}
-              onClick={() => setMobileOpen(false)}
-              className="block px-4 py-3 rounded-xl text-sm font-medium text-slate-700 hover:bg-slate-50 border border-slate-200 mt-2"
+              onClick={() => setMenuOpen(false)}
+              className="block px-4 py-2.5 rounded-lg text-sm font-medium text-slate-700 hover:bg-slate-50 border-t border-slate-100 mt-1 pt-3"
             >
-              <UserIcon size={14} className="inline mr-2" />
               Admin Panel
             </Link>
           )}

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { MainLayout } from "../../../shared/components/layout/MainLayout";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "../../../shared/components/ui/Card";
 import { Button } from "../../../shared/components/ui/Button";

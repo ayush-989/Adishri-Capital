@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { useSearchParams, useNavigate } from "react-router-dom";
+import { useSearchParams, useNavigate, Link } from "react-router-dom";
+import { ArrowLeft } from "lucide-react";
 import { MainLayout } from "../../../shared/components/layout/MainLayout";
 import { Card, CardHeader, CardTitle, CardContent } from "../../../shared/components/ui/Card";
 import { Input } from "../../../shared/components/ui/Input";
@@ -49,7 +50,10 @@ export function ProcessingFee() {
 
   return (
     <MainLayout>
-      <div className="max-w-xl mx-auto px-4 py-12">
+      <div className="max-w-xl mx-auto px-4 py-8">
+        <Link to={ROUTES.USER_DASHBOARD} className="inline-flex items-center gap-1.5 text-sm text-slate-500 hover:text-slate-800 mb-4 transition-colors">
+          <ArrowLeft size={16} /> Back
+        </Link>
         <Card>
           <CardHeader className="text-center">
             <CardTitle>Processing Fee Application</CardTitle>
