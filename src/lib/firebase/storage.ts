@@ -1,24 +1,21 @@
-import ImageKit from "@imagekit/javascript";
-
-const imagekit = new ImageKit({
-  publicKey: import.meta.env.VITE_IMAGEKIT_PUBLIC_KEY,
-  urlEndpoint: import.meta.env.VITE_IMAGEKIT_URL_ENDPOINT,
-});
-
-const getAuthParams = async () => {
-  const res = await fetch(import.meta.env.VITE_IMAGEKIT_AUTH_URL);
-  return res.json();
-};
+const IMAGEKIT_UPLOAD_URL = "https://upload.imagekit.io/api/v1/files/upload";
 
 export const uploadFile = async (file: File, path: string): Promise<string> => {
-  const { token, expire, signature } = await getAuthParams();
-  const result = await imagekit.upload({
-    file,
-    fileName: path.replace(/\//g, "_"),
-    folder: "/kyc",
-    token,
-    expire,
-    signature,
+  const formData = new FormData();
+  formData.append("file", file);
+  formData.append("fileName", path.replace(/\//g, "_"));
+  formData.append("folder", "/kyc");
+  formData.append("publicKey", import.meta.env.VITE_IMAGEKIT_PUBLIC_KEY);
+
+  const res = await fetch(IMAGEKIT_UPLOAD_URL, {
+    method: "POST",
+    headers: {
+      Authorization: `Basic ${btoa(import.meta.env.VITE_IMAGEKIT_PRIVATE_KEY + ":")}`,
+    },
+    body: formData,
   });
-  return result.url;
+
+  if (!res.ok) throw new Error("Image upload failed");
+  const data = await res.json();
+  return data.url;
 };
