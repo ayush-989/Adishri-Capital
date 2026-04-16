@@ -23,6 +23,7 @@ export const ROUTES = {
   PROCESSING_FEE: "/processing-fee",
   ADMIN_DASHBOARD: "/admin",
   ADMIN_LEADS: "/admin/leads",
+  ADMIN_APPLICATION: "/admin/application",
   ADMIN_REPAYMENTS: "/admin/repayments",
 } as const;
 
