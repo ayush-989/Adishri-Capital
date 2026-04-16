@@ -1,127 +1,165 @@
-import { useState, useEffect } from "react";
+import { useState, useMemo } from "react";
 import { Link } from "react-router-dom";
-import { AdminLayout } from "../../../shared/components/layout/AdminLayout";
-import { Card, CardContent } from "../../../shared/components/ui/Card";
-import { Input } from "../../../shared/components/ui/Input";
-import { Button } from "../../../shared/components/ui/Button";
 import { useApplications } from "../../../hooks/useApplications";
-import { ROUTES } from "../../../utils/constants";
-import type { LoanApplication } from "../../../lib/models/application.model";
+import { LOAN_STATUS, ROUTES } from "../../../utils/constants";
 import { Search, Filter, Eye } from "lucide-react";
 import { format } from "date-fns";
 
-const STATUS_COLORS: Record<string, string> = {
-  Approved: "bg-green-100 text-green-800",
-  Disbursed: "bg-emerald-100 text-emerald-800",
-  Rejected: "bg-red-100 text-red-800",
-  "Pending Payment Verification": "bg-amber-100 text-amber-800",
+const STATUS_STYLES: Record<string, string> = {
+  [LOAN_STATUS.APPROVED]: "bg-green-100 text-green-800",
+  [LOAN_STATUS.DISBURSED]: "bg-emerald-100 text-emerald-800",
+  [LOAN_STATUS.REJECTED]: "bg-red-100 text-red-800",
+  [LOAN_STATUS.PENDING_APPROVAL]: "bg-yellow-100 text-yellow-800",
+  [LOAN_STATUS.PENDING_KYC]: "bg-amber-100 text-amber-800",
+  [LOAN_STATUS.PENDING_PAYMENT]: "bg-orange-100 text-orange-800",
 };
 
-const getStatusColor = (status: string) => STATUS_COLORS[status] ?? "bg-blue-100 text-blue-800";
+const STATUS_OPTIONS = ["All", ...Object.values(LOAN_STATUS)];
 
 export function LeadManagement() {
-  const applications = useApplications();
+  const { applications, loading, error } = useApplications();
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("All");
-  const [filtered, setFiltered] = useState<LoanApplication[]>([]);
 
-  useEffect(() => {
-    let result = applications;
-    if (statusFilter !== "All") result = result.filter((a) => a.status === statusFilter);
-    if (search) {
-      const q = search.toLowerCase();
-      result = result.filter(
-        (a) =>
-          a.appId.toLowerCase().includes(q) ||
-          a.basicDetails?.fullName.toLowerCase().includes(q)
-      );
-    }
-    setFiltered(result);
-  }, [search, statusFilter, applications]);
+  const filtered = useMemo(() => {
+    const q = search.toLowerCase();
+    console.log(`[LeadManagement] Filtering: ${applications.length} apps, search="${q}", status="${statusFilter}"`);
+    return applications.filter((a) => {
+      const matchesStatus = statusFilter === "All" || a.status === statusFilter;
+      const matchesSearch =
+        !q ||
+        a.appId.toLowerCase().includes(q) ||
+        a.basicDetails?.fullName?.toLowerCase().includes(q);
+      return matchesStatus && matchesSearch;
+    });
+  }, [applications, search, statusFilter]);
+
+  const isLoading = loading;
 
   return (
-    <AdminLayout>
-      <div className="p-8">
+    <div className="p-6 md:p-8">
+        {/* Header */}
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-4">
-          <h1 className="text-3xl font-bold text-slate-900">Lead Management</h1>
+          <div>
+            <h1 className="text-2xl font-bold text-slate-900">Lead Management</h1>
+            <p className="text-sm text-slate-500 mt-1">{applications.length} total applications</p>
+          </div>
+
           <div className="flex gap-3 w-full sm:w-auto">
-            <div className="relative w-full sm:w-64">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
-              <Input
-                placeholder="Search by ID or Name..."
-                className="pl-9 w-full"
+            {/* Search */}
+            <div className="relative flex-1 sm:w-64">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={16} />
+              <input
+                type="text"
+                placeholder="Search name or ID..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
+                className="w-full h-10 pl-9 pr-4 rounded-lg border border-slate-300 bg-white text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>
+
+            {/* Status Filter */}
             <div className="relative">
-              <Filter className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
+              <Filter className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" size={16} />
               <select
-                className="h-10 pl-9 pr-8 rounded-lg border border-slate-300 bg-white text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 appearance-none"
                 value={statusFilter}
                 onChange={(e) => setStatusFilter(e.target.value)}
+                className="h-10 pl-9 pr-8 rounded-lg border border-slate-300 bg-white text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 appearance-none cursor-pointer"
               >
-                <option value="All">All Statuses</option>
-                <option value="Pending Payment Verification">Fee Verification</option>
-                <option value="Pending KYC Verification">KYC Verification</option>
-                <option value="Pending Approval">Pending Approval</option>
-                <option value="Approved">Approved</option>
-                <option value="Disbursed">Disbursed</option>
-                <option value="Rejected">Rejected</option>
+                {STATUS_OPTIONS.map((s) => (
+                  <option key={s} value={s}>{s === "All" ? "All Statuses" : s}</option>
+                ))}
               </select>
             </div>
           </div>
         </div>
 
-        <Card>
-          <CardContent className="p-0">
-            <div className="overflow-x-auto">
-              <table className="w-full text-left text-sm whitespace-nowrap">
-                <thead className="bg-slate-50 border-b border-slate-200">
+        {/* Table Card */}
+        <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm text-left whitespace-nowrap">
+              <thead className="bg-gray-100 border-b border-slate-200">
+                <tr>
+                  {["Name", "Loan ID", "Contact", "Applied On", "Status", "Actions"].map((h) => (
+                    <th key={h} className="px-6 py-4 font-semibold text-slate-600 text-xs uppercase tracking-wide">
+                      {h}
+                    </th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-100">
+                {isLoading ? (
                   <tr>
-                    <th className="px-6 py-4 font-semibold text-slate-600">Application ID</th>
-                    <th className="px-6 py-4 font-semibold text-slate-600">Applicant Name</th>
-                    <th className="px-6 py-4 font-semibold text-slate-600">Applied On</th>
-                    <th className="px-6 py-4 font-semibold text-slate-600">Status</th>
-                    <th className="px-6 py-4 font-semibold text-slate-600 text-right">Actions</th>
+                    <td colSpan={6} className="px-6 py-16 text-center">
+                      <div className="flex flex-col items-center gap-3 text-slate-400">
+                        <div className="w-8 h-8 border-2 border-blue-500 border-t-transparent rounded-full animate-spin" />
+                        <span className="text-sm">Loading applications...</span>
+                      </div>
+                    </td>
                   </tr>
-                </thead>
-                <tbody className="divide-y divide-slate-100">
-                  {filtered.map((app) => (
+                ) : error ? (
+                  <tr>
+                    <td colSpan={6} className="px-6 py-16 text-center">
+                      <div className="flex flex-col items-center gap-2 text-red-500">
+                        <span className="text-sm font-medium">Failed to load applications</span>
+                        <span className="text-xs text-slate-400">{error}</span>
+                      </div>
+                    </td>
+                  </tr>
+                ) : filtered.length === 0 ? (
+                  <tr>
+                    <td colSpan={6} className="px-6 py-16 text-center text-slate-500">
+                      No applications found matching your criteria.
+                    </td>
+                  </tr>
+                ) : (
+                  filtered.map((app) => (
                     <tr key={app.id} className="hover:bg-slate-50 transition-colors">
-                      <td className="px-6 py-4 font-mono font-medium text-slate-900">{app.appId}</td>
-                      <td className="px-6 py-4 text-slate-600">{app.basicDetails?.fullName}</td>
+                      <td className="px-6 py-4 font-medium text-slate-900">
+                        {app.basicDetails?.fullName ?? "—"}
+                      </td>
+                      <td className="px-6 py-4 font-mono text-slate-600 text-xs">
+                        {app.appId}
+                      </td>
                       <td className="px-6 py-4 text-slate-500">
-                        {format(new Date(app.createdAt), "MMM dd, yyyy")}
+                        <div>{app.basicDetails?.phone ?? "—"}</div>
+                        <div className="text-xs text-slate-400">{app.basicDetails?.email ?? ""}</div>
+                      </td>
+                      <td className="px-6 py-4 text-slate-500">
+                        {app.createdAt ? format(new Date(app.createdAt), "MMM dd, yyyy") : "—"}
                       </td>
                       <td className="px-6 py-4">
-                        <span className={`px-3 py-1 rounded-full text-xs font-medium ${getStatusColor(app.status)}`}>
+                        <span
+                          className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium ${
+                            STATUS_STYLES[app.status] ?? "bg-blue-100 text-blue-800"
+                          }`}
+                        >
                           {app.status}
                         </span>
                       </td>
-                      <td className="px-6 py-4 text-right">
-                        <Link to={`${ROUTES.ADMIN_LEADS}/${app.id}`}>
-                          <Button variant="ghost" size="sm" className="text-blue-600 hover:text-blue-700 hover:bg-blue-50">
-                            <Eye size={16} className="mr-2" />
-                            Review
-                          </Button>
+                      <td className="px-6 py-4">
+                        <Link
+                          to={`${ROUTES.ADMIN_APPLICATION}/${app.id}`}
+                          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium text-blue-600 bg-blue-50 hover:bg-blue-100 transition-colors"
+                        >
+                          <Eye size={14} />
+                          View Details
                         </Link>
                       </td>
                     </tr>
-                  ))}
-                  {filtered.length === 0 && (
-                    <tr>
-                      <td colSpan={5} className="px-6 py-12 text-center text-slate-500">
-                        No applications found matching your criteria.
-                      </td>
-                    </tr>
-                  )}
-                </tbody>
-              </table>
+                  ))
+                )}
+              </tbody>
+            </table>
+          </div>
+
+          {/* Footer count */}
+          {filtered.length > 0 && (
+            <div className="px-6 py-3 bg-slate-50 border-t border-slate-100 text-xs text-slate-400">
+              Showing {filtered.length} of {applications.length} applications
             </div>
-          </CardContent>
-        </Card>
+          )}
+        </div>
       </div>
-    </AdminLayout>
   );
 }

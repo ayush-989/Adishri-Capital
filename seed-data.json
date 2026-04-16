@@ -1,0 +1,273 @@
+{
+  "_meta": {
+    "project": "Adishri Capitals",
+    "generated": "2025-07-10",
+    "note": "Import each top-level key as a separate Firestore collection. Document IDs match the 'id' field of each object.",
+    "processingFeeAmount": 49,
+    "interestFormula": "remainingBalance = amount + (amount * rate / 100)"
+  },
+
+  "users": [
+    {
+      "uid": "uid_rahul_sharma_001",
+      "email": "rahul.sharma@gmail.com",
+      "phoneNumber": "+919876543210",
+      "role": "user"
+    },
+    {
+      "uid": "uid_priya_nair_002",
+      "email": "priya.nair@yahoo.com",
+      "phoneNumber": "+918765432109",
+      "role": "user"
+    },
+    {
+      "uid": "uid_arjun_patel_003",
+      "email": "arjun.patel@outlook.com",
+      "phoneNumber": "+917654321098",
+      "role": "user"
+    },
+    {
+      "uid": "uid_sunita_verma_004",
+      "email": "sunita.verma@gmail.com",
+      "phoneNumber": "+916543210987",
+      "role": "user"
+    },
+    {
+      "uid": "uid_kiran_reddy_005",
+      "email": "kiran.reddy@gmail.com",
+      "phoneNumber": "+915432109876",
+      "role": "user"
+    },
+    {
+      "uid": "uid_admin_adishri_000",
+      "email": "admin@adishricapitals.com",
+      "phoneNumber": "+919999999999",
+      "role": "admin"
+    }
+  ],
+
+  "applications": [
+    {
+      "id": "app_rahul_001",
+      "appId": "L-48271",
+      "status": "Disbursed",
+      "basicDetails": {
+        "fullName": "Rahul Sharma",
+        "phone": "9876543210",
+        "email": "rahul.sharma@gmail.com",
+        "address": "42, Shivaji Nagar, Pune, Maharashtra - 411005"
+      },
+      "kycDetails": {
+        "panNumber": "ABCPS1234R",
+        "aadhaarNumber": "2345 6789 0123",
+        "accountNumber": "50100123456789",
+        "ifsc": "HDFC0001234",
+        "panUrl": "https://placehold.co/600x400/e2e8f0/475569?text=PAN+Card",
+        "aadhaarFrontUrl": "https://placehold.co/600x400/e2e8f0/475569?text=Aadhaar+Front",
+        "aadhaarBackUrl": "https://placehold.co/600x400/e2e8f0/475569?text=Aadhaar+Back",
+        "passbookUrl": "https://placehold.co/600x400/e2e8f0/475569?text=Passbook"
+      },
+      "finalAmount": 50000,
+      "finalInterestRate": 12,
+      "remainingBalance": 56000,
+      "createdAt": "2025-06-01T09:15:00.000Z"
+    },
+    {
+      "id": "app_priya_002",
+      "appId": "L-63904",
+      "status": "Disbursed",
+      "basicDetails": {
+        "fullName": "Priya Nair",
+        "phone": "8765432109",
+        "email": "priya.nair@yahoo.com",
+        "address": "15, MG Road, Bengaluru, Karnataka - 560001"
+      },
+      "kycDetails": {
+        "panNumber": "BMNPN5678K",
+        "aadhaarNumber": "3456 7890 1234",
+        "accountNumber": "60200234567890",
+        "ifsc": "SBIN0002345",
+        "panUrl": "https://placehold.co/600x400/e2e8f0/475569?text=PAN+Card",
+        "aadhaarFrontUrl": "https://placehold.co/600x400/e2e8f0/475569?text=Aadhaar+Front",
+        "aadhaarBackUrl": "https://placehold.co/600x400/e2e8f0/475569?text=Aadhaar+Back",
+        "passbookUrl": "https://placehold.co/600x400/e2e8f0/475569?text=Passbook"
+      },
+      "finalAmount": 75000,
+      "finalInterestRate": 10,
+      "remainingBalance": 82500,
+      "createdAt": "2025-06-05T11:30:00.000Z"
+    },
+    {
+      "id": "app_arjun_003",
+      "appId": "L-71538",
+      "status": "Approved",
+      "basicDetails": {
+        "fullName": "Arjun Patel",
+        "phone": "7654321098",
+        "email": "arjun.patel@outlook.com",
+        "address": "8, Satellite Road, Ahmedabad, Gujarat - 380015"
+      },
+      "kycDetails": {
+        "panNumber": "CJKPA9012F",
+        "aadhaarNumber": "4567 8901 2345",
+        "accountNumber": "70300345678901",
+        "ifsc": "ICIC0003456",
+        "panUrl": "https://placehold.co/600x400/e2e8f0/475569?text=PAN+Card",
+        "aadhaarFrontUrl": "https://placehold.co/600x400/e2e8f0/475569?text=Aadhaar+Front",
+        "aadhaarBackUrl": "https://placehold.co/600x400/e2e8f0/475569?text=Aadhaar+Back",
+        "passbookUrl": "https://placehold.co/600x400/e2e8f0/475569?text=Passbook"
+      },
+      "finalAmount": 30000,
+      "finalInterestRate": 15,
+      "remainingBalance": 34500,
+      "createdAt": "2025-06-10T14:00:00.000Z"
+    },
+    {
+      "id": "app_sunita_004",
+      "appId": "L-82647",
+      "status": "Pending KYC Verification",
+      "basicDetails": {
+        "fullName": "Sunita Verma",
+        "phone": "6543210987",
+        "email": "sunita.verma@gmail.com",
+        "address": "22, Civil Lines, Jaipur, Rajasthan - 302006"
+      },
+      "kycDetails": {
+        "panNumber": "DLSVV3456M",
+        "aadhaarNumber": "5678 9012 3456",
+        "accountNumber": "80400456789012",
+        "ifsc": "PUNB0004567",
+        "panUrl": "https://placehold.co/600x400/e2e8f0/475569?text=PAN+Card",
+        "aadhaarFrontUrl": "https://placehold.co/600x400/e2e8f0/475569?text=Aadhaar+Front",
+        "aadhaarBackUrl": "https://placehold.co/600x400/e2e8f0/475569?text=Aadhaar+Back",
+        "passbookUrl": "https://placehold.co/600x400/e2e8f0/475569?text=Passbook"
+      },
+      "createdAt": "2025-06-18T10:45:00.000Z"
+    },
+    {
+      "id": "app_kiran_005",
+      "appId": "L-95312",
+      "status": "Pending Payment Verification",
+      "basicDetails": {
+        "fullName": "Kiran Reddy",
+        "phone": "5432109876",
+        "email": "kiran.reddy@gmail.com",
+        "address": "5, Banjara Hills, Hyderabad, Telangana - 500034"
+      },
+      "kycDetails": {
+        "panNumber": "EMKRR7890P",
+        "aadhaarNumber": "6789 0123 4567",
+        "accountNumber": "90500567890123",
+        "ifsc": "AXIS0005678",
+        "panUrl": "https://placehold.co/600x400/e2e8f0/475569?text=PAN+Card",
+        "aadhaarFrontUrl": "https://placehold.co/600x400/e2e8f0/475569?text=Aadhaar+Front",
+        "aadhaarBackUrl": "https://placehold.co/600x400/e2e8f0/475569?text=Aadhaar+Back",
+        "passbookUrl": "https://placehold.co/600x400/e2e8f0/475569?text=Passbook"
+      },
+      "createdAt": "2025-06-22T08:20:00.000Z"
+    },
+    {
+      "id": "app_meena_006",
+      "appId": "L-10984",
+      "status": "Rejected",
+      "basicDetails": {
+        "fullName": "Meena Iyer",
+        "phone": "9123456780",
+        "email": "meena.iyer@rediffmail.com",
+        "address": "3, Anna Salai, Chennai, Tamil Nadu - 600002"
+      },
+      "kycDetails": {
+        "panNumber": "FNMIY2345Q",
+        "aadhaarNumber": "7890 1234 5678",
+        "accountNumber": "10600678901234",
+        "ifsc": "KARB0006789",
+        "panUrl": "https://placehold.co/600x400/e2e8f0/475569?text=PAN+Card",
+        "aadhaarFrontUrl": "https://placehold.co/600x400/e2e8f0/475569?text=Aadhaar+Front",
+        "aadhaarBackUrl": "https://placehold.co/600x400/e2e8f0/475569?text=Aadhaar+Back",
+        "passbookUrl": "https://placehold.co/600x400/e2e8f0/475569?text=Passbook"
+      },
+      "createdAt": "2025-06-08T16:10:00.000Z"
+    }
+  ],
+
+  "transactions": [
+    {
+      "id": "txn_fee_rahul_001",
+      "txnId": "TXN17199001001",
+      "loanId": "app_rahul_001",
+      "amount": 49,
+      "utr": "UTR482710001234",
+      "screenshotUrl": "https://placehold.co/600x800/f0fdf4/166534?text=Payment+Screenshot",
+      "type": "fee",
+      "verified": true,
+      "createdAt": "2025-06-01T10:05:00.000Z"
+    },
+    {
+      "id": "txn_fee_priya_002",
+      "txnId": "TXN17199002002",
+      "loanId": "app_priya_002",
+      "amount": 49,
+      "utr": "UTR639040002345",
+      "screenshotUrl": "https://placehold.co/600x800/f0fdf4/166534?text=Payment+Screenshot",
+      "type": "fee",
+      "verified": true,
+      "createdAt": "2025-06-05T12:15:00.000Z"
+    },
+    {
+      "id": "txn_fee_kiran_003",
+      "txnId": "TXN17199003003",
+      "loanId": "app_kiran_005",
+      "amount": 49,
+      "utr": "UTR953120003456",
+      "screenshotUrl": "https://placehold.co/600x800/f0fdf4/166534?text=Payment+Screenshot",
+      "type": "fee",
+      "verified": false,
+      "createdAt": "2025-06-22T09:00:00.000Z"
+    },
+    {
+      "id": "txn_repay_rahul_004",
+      "txnId": "TXN17199004004",
+      "loanId": "app_rahul_001",
+      "amount": 14000,
+      "utr": "UTR482710004567",
+      "screenshotUrl": "https://placehold.co/600x800/eff6ff/1e40af?text=Repayment+Screenshot",
+      "type": "repayment",
+      "verified": true,
+      "createdAt": "2025-07-01T11:30:00.000Z"
+    },
+    {
+      "id": "txn_repay_priya_005",
+      "txnId": "TXN17199005005",
+      "loanId": "app_priya_002",
+      "amount": 20625,
+      "utr": "UTR639040005678",
+      "screenshotUrl": "https://placehold.co/600x800/eff6ff/1e40af?text=Repayment+Screenshot",
+      "type": "repayment",
+      "verified": false,
+      "createdAt": "2025-07-05T14:00:00.000Z"
+    },
+    {
+      "id": "txn_repay_arjun_006",
+      "txnId": "TXN17199006006",
+      "loanId": "app_arjun_003",
+      "amount": 11500,
+      "utr": "UTR715380006789",
+      "screenshotUrl": "https://placehold.co/600x800/eff6ff/1e40af?text=Repayment+Screenshot",
+      "type": "repayment",
+      "verified": false,
+      "createdAt": "2025-07-08T09:45:00.000Z"
+    }
+  ],
+
+  "_firestore_import_guide": {
+    "step1": "Go to Firebase Console → Firestore Database → Import/Export, OR use the seeder script below.",
+    "step2": "Each array maps to a collection. The 'id' field of each object becomes the Firestore document ID.",
+    "collections": {
+      "users":        "Document ID = uid",
+      "applications": "Document ID = id  (e.g. app_rahul_001)",
+      "transactions": "Document ID = id  (e.g. txn_fee_rahul_001)"
+    },
+    "pendingRepayments_query": "transactions WHERE type == 'repayment' AND verified == false  →  returns txn_repay_priya_005, txn_repay_arjun_006",
+    "pendingFee_query":        "transactions WHERE type == 'fee'       AND verified == false  →  returns txn_fee_kiran_003"
+  }
+}
