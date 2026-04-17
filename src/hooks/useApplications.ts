@@ -14,17 +14,13 @@ export const useApplications = (): UseApplicationsResult => {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    console.log("[useApplications] Subscribing to applications...");
     const unsubscribe = subscribeToApplications(
       (apps) => {
-        console.log(`[useApplications] Received ${apps.length} applications`);
-        console.log("[useApplications] Data:", JSON.stringify(apps.map(a => ({ id: a.id, status: a.status, name: a.basicDetails?.fullName }))));
         setApplications(apps);
         setLoading(false);
         setError(null);
       },
       (err) => {
-        console.error("[useApplications] Firestore error:", err);
         setError(err.message);
         setLoading(false);
       }

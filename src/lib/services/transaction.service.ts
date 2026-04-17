@@ -48,11 +48,8 @@ export const getTransaction = async (id: string): Promise<Transaction | null> =>
 
 /** Fetch all transactions across all loans. */
 export const getAllTransactions = async (): Promise<Transaction[]> => {
-  console.log("[transaction.service] getAllTransactions: Fetching from Firestore...");
   const snap = await getDocs(query(collection(db, COL), orderBy("createdAt", "desc")));
-  const txns = snap.docs.map((d) => toTxn(d.id, d.data()));
-  console.log(`[transaction.service] getAllTransactions: Found ${txns.length} documents`);
-  return txns;
+  return snap.docs.map((d) => toTxn(d.id, d.data()));
 };
 
 /** Fetch all transactions (fee + repayment) for a specific loan. */
@@ -68,13 +65,10 @@ export const getAllByLoanId = async (loanId: string): Promise<Transaction[]> => 
  * Returns null if the user hasn't submitted payment yet.
  */
 export const getFeeTransactionByLoanId = async (loanId: string): Promise<Transaction | null> => {
-  console.log(`[transaction.service] getFeeTransactionByLoanId: loanId=${loanId}`);
   const snap = await getDocs(
     query(collection(db, COL), where("loanId", "==", loanId), where("type", "==", "fee"))
   );
-  const result = snap.empty ? null : toTxn(snap.docs[0].id, snap.docs[0].data());
-  console.log(`[transaction.service] getFeeTransactionByLoanId: found=${!!result}`);
-  return result;
+  return snap.empty ? null : toTxn(snap.docs[0].id, snap.docs[0].data());
 };
 
 /**
@@ -109,19 +103,23 @@ export const getPendingFees = async (): Promise<Transaction[]> => {
 
 // ─── Real-time Subscriptions ──────────────────────────────────────────────────
 
-/** Subscribe to all unverified repayments. Used by usePendingRepayments hook. */
+/** Subscribe to all unverified repayments. Used by usePendingRepayments hook.
+ * Excludes rejected transactions — they have verified=false but must not reappear. */
 export const subscribeToPendingRepayments = (
   callback: (txns: Transaction[]) => void
 ): Unsubscribe => {
-  console.log("[transaction.service] subscribeToPendingRepayments: Starting subscription...");
   const q = query(
     collection(db, COL),
     where("type", "==", "repayment"),
     where("verified", "==", false)
   );
+  // Firestore can't filter on two inequality fields, so we exclude
+  // rejected docs client-side after the snapshot arrives.
   return onSnapshot(q, (snap) => {
-    console.log(`[transaction.service] subscribeToPendingRepayments: snapshot received, ${snap.docs.length} docs`);
-    callback(snap.docs.map((d) => toTxn(d.id, d.data())));
+    const txns = snap.docs
+      .map((d) => toTxn(d.id, d.data()))
+      .filter((t) => t.status !== "rejected");
+    callback(txns);
   });
 };
 

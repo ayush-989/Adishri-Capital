@@ -25,6 +25,10 @@ export const ROUTES = {
   ADMIN_LEADS: "/admin/leads",
   ADMIN_APPLICATION: "/admin/application",
   ADMIN_REPAYMENTS: "/admin/repayments",
+  ADMIN_LOANS: "/admin/loans",
+  ADMIN_RECOVERY: "/admin/recovery",
+  ADMIN_USERS: "/admin/users",
+  ADMIN_USER_DETAIL: "/admin/users",  // append /:id at the route level
 } as const;
 
 export const PROCESSING_FEE_AMOUNT = 49;

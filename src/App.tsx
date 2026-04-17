@@ -17,6 +17,10 @@ import { AdminDashboard } from "./features/admin/pages/AdminDashboard";
 import { LeadManagement } from "./features/admin/pages/LeadManagement";
 import { ApplicationDetails } from "./features/admin/pages/ApplicationDetails";
 import { RepaymentApprovals } from "./features/admin/pages/RepaymentApprovals";
+import { LoansPage } from "./features/admin/pages/LoansPage";
+import { RecoveryPage } from "./features/admin/pages/RecoveryPage";
+import { UsersPage } from "./features/admin/pages/UsersPage";
+import { UserDetails } from "./features/admin/pages/UserDetails";
 
 // Auth pages
 import { AdminLogin } from "./features/auth/pages/AdminLogin";
@@ -53,6 +57,10 @@ function AnimatedRoutes() {
           <Route path={ROUTES.ADMIN_LEADS}                  element={<LeadManagement />} />
           <Route path={`${ROUTES.ADMIN_APPLICATION}/:id`}   element={<ApplicationDetails />} />
           <Route path={ROUTES.ADMIN_REPAYMENTS}             element={<RepaymentApprovals />} />
+          <Route path={ROUTES.ADMIN_LOANS}                  element={<LoansPage />} />
+          <Route path={ROUTES.ADMIN_RECOVERY}               element={<RecoveryPage />} />
+          <Route path={ROUTES.ADMIN_USERS}                  element={<UsersPage />} />
+          <Route path={`${ROUTES.ADMIN_USER_DETAIL}/:id`}   element={<UserDetails />} />
         </Route>
 
         {/* ── 404 ── */}
