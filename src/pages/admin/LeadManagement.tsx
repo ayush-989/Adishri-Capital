@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { collection, query, onSnapshot, orderBy } from "firebase/firestore";
+import { collection, onSnapshot } from "firebase/firestore";
 import { db } from "../../firebase/config";
 import { AdminLayout } from "../../components/layout/AdminLayout";
 import { Card, CardContent } from "../../components/ui/Card";
@@ -17,9 +17,16 @@ export function LeadManagement() {
   const [statusFilter, setStatusFilter] = useState("All");
 
   useEffect(() => {
-    const q = query(collection(db, "applications"), orderBy("createdAt", "desc"));
+    // orderBy removed to avoid Firestore composite index requirement.
+    // Sorting is handled client-side below.
+    const q = collection(db, "applications");
     const unsubscribe = onSnapshot(q, (snapshot) => {
-      const apps = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      const apps = snapshot.docs
+        .map(doc => ({ id: doc.id, ...doc.data() }))
+        .sort((a: any, b: any) => {
+          // Sort newest first by createdAt string (ISO format sorts lexicographically)
+          return (b.createdAt || "").localeCompare(a.createdAt || "");
+        });
       setApplications(apps);
       setFilteredApps(apps);
     });

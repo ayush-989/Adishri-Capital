@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
+import { ArrowLeft } from "lucide-react";
 import { MainLayout } from "../../../shared/components/layout/MainLayout";
 import { Input } from "../../../shared/components/ui/Input";
 import { Button } from "../../../shared/components/ui/Button";
@@ -51,10 +52,13 @@ export function LoanApplicationForm() {
 
   return (
     <MainLayout>
-      <div className="max-w-3xl mx-auto px-4 py-12">
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-slate-900 mb-2">Loan Application</h1>
-          <p className="text-slate-600">Complete your profile to get instant approval.</p>
+      <div className="max-w-3xl mx-auto px-4 py-8">
+        <div className="mb-6">
+          <Link to="/" className="inline-flex items-center gap-1.5 text-sm text-slate-500 hover:text-slate-800 mb-4 transition-colors">
+            <ArrowLeft size={16} /> Back to Home
+          </Link>
+          <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 mb-1">Loan Application</h1>
+          <p className="text-slate-500 text-sm">Complete your profile to get instant approval.</p>
         </div>
 
         <div className="mb-8">

@@ -59,3 +59,25 @@ export const submitProcessingFee = async (
     createdAt: new Date().toISOString(),
   });
 };
+
+export const submitRepayment = async (
+  loanId: string,
+  amount: number,
+  utr: string,
+  screenshot: File
+): Promise<void> => {
+  const txnId = generateTxnId();
+  const screenshotUrl = await uploadFile(screenshot, `repayments/${loanId}/${txnId}`);
+
+  await createTransaction(txnId, {
+    txnId,
+    loanId,
+    amount,
+    utr,
+    screenshotUrl,
+    type: "repayment",
+    verified: false,
+    createdAt: new Date().toISOString(),
+  });
+};
+
