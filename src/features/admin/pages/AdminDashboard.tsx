@@ -1,96 +1,121 @@
 import { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
+import { motion, AnimatePresence } from "framer-motion";
+import {
+  AreaChart, Area, XAxis, YAxis, CartesianGrid,
+  Tooltip, ResponsiveContainer,
+} from "recharts";
 import {
   fetchDashboardStats,
   type DashboardStats,
 } from "../../../lib/controllers/admin.controller";
 import { formatCurrency } from "../../../utils/helpers";
+import { ROUTES } from "../../../utils/constants";
+import { StatCard } from "../../../shared/components/ui/StatCard";
 import {
-  Banknote,
-  TrendingDown,
-  TrendingUp,
-  Users,
-  AlertCircle,
-  Activity,
-  RefreshCw,
-  ArrowUpRight,
+  Banknote, TrendingDown, TrendingUp, Users,
+  AlertCircle, Activity, RefreshCw,
+  ArrowRight, CheckCircle, Wallet,
 } from "lucide-react";
 
-// ─── Types ────────────────────────────────────────────────────────────────────
+// ─── Sparkline data ───────────────────────────────────────────────────────────
 
-interface StatCard {
-  label: string;
-  value: string;
-  subtext: string;
-  icon: React.ElementType;
-  accent: string;       // value text colour
-  iconBg: string;       // icon wrapper bg
-  iconColor: string;    // icon colour
-  border: string;       // card top-border accent
-}
+const SPARKLINE = [
+  { month: "Feb", disbursed: 120000, recovered: 40000 },
+  { month: "Mar", disbursed: 180000, recovered: 75000 },
+  { month: "Apr", disbursed: 150000, recovered: 95000 },
+  { month: "May", disbursed: 220000, recovered: 130000 },
+  { month: "Jun", disbursed: 280000, recovered: 170000 },
+  { month: "Jul", disbursed: 310000, recovered: 210000 },
+];
 
-// ─── Card config ──────────────────────────────────────────────────────────────
+// ─── Animation variants ───────────────────────────────────────────────────────
 
-function buildCards(s: DashboardStats): StatCard[] {
+const pageVariants = {
+  hidden: { opacity: 0, y: 12 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.35, ease: "easeOut" } },
+};
+
+const sectionVariants = {
+  hidden: { opacity: 0, y: 10 },
+  visible: (i: number) => ({
+    opacity: 1, y: 0,
+    transition: { duration: 0.3, delay: i * 0.08, ease: "easeOut" },
+  }),
+};
+
+// ─── Card definitions ─────────────────────────────────────────────────────────
+
+function buildCards(s: DashboardStats) {
   return [
     {
-      label:     "Total Loan Exposure",
-      value:     formatCurrency(s.totalExposure),
-      subtext:   `${s.activeLoans} loan${s.activeLoans !== 1 ? "s" : ""} disbursed`,
-      icon:      Banknote,
-      accent:    "text-slate-900",
-      iconBg:    "bg-blue-50",
-      iconColor: "text-blue-600",
-      border:    "border-t-blue-500",
+      label: "Total Exposure",
+      value: formatCurrency(s.totalExposure),
+      subtext: `${s.activeLoans} loan${s.activeLoans !== 1 ? "s" : ""} disbursed`,
+      icon: Banknote,
+      trend: "up" as const,
+      trendLabel: "Active portfolio",
+      gradient: "from-blue-50 to-indigo-50/50",
+      iconClass: "text-blue-600 bg-blue-100",
+      href: ROUTES.ADMIN_LOANS,
     },
     {
-      label:     "Pending Recovery",
-      value:     formatCurrency(s.pendingRecoveries),
-      subtext:   "Outstanding balance",
-      icon:      TrendingDown,
-      accent:    "text-rose-600",
-      iconBg:    "bg-rose-50",
-      iconColor: "text-rose-500",
-      border:    "border-t-rose-500",
+      label: "Pending Recovery",
+      value: formatCurrency(s.pendingRecoveries),
+      subtext: "Outstanding balance",
+      icon: TrendingDown,
+      trend: "down" as const,
+      trendLabel: "Needs attention",
+      gradient: "from-rose-50 to-pink-50/50",
+      iconClass: "text-rose-600 bg-rose-100",
+      valueClass: "text-rose-700",
+      href: ROUTES.ADMIN_RECOVERY,
     },
     {
-      label:     "Total Recovered",
-      value:     formatCurrency(s.totalRecovered),
-      subtext:   "Verified repayments",
-      icon:      TrendingUp,
-      accent:    "text-emerald-600",
-      iconBg:    "bg-emerald-50",
-      iconColor: "text-emerald-600",
-      border:    "border-t-emerald-500",
+      label: "Total Recovered",
+      value: formatCurrency(s.totalRecovered),
+      subtext: "Verified repayments",
+      icon: TrendingUp,
+      trend: "up" as const,
+      trendLabel: "On track",
+      gradient: "from-emerald-50 to-teal-50/50",
+      iconClass: "text-emerald-600 bg-emerald-100",
+      valueClass: "text-emerald-700",
+      href: ROUTES.ADMIN_RECOVERY,
     },
     {
-      label:     "Active Users",
-      value:     s.totalUsers.toLocaleString("en-IN"),
-      subtext:   "Registered on platform",
-      icon:      Users,
-      accent:    "text-slate-900",
-      iconBg:    "bg-indigo-50",
-      iconColor: "text-indigo-600",
-      border:    "border-t-indigo-500",
+      label: "Registered Users",
+      value: s.totalUsers.toLocaleString("en-IN"),
+      subtext: "Platform borrowers",
+      icon: Users,
+      trend: "up" as const,
+      trendLabel: "Growing",
+      gradient: "from-violet-50 to-purple-50/50",
+      iconClass: "text-violet-600 bg-violet-100",
+      href: ROUTES.ADMIN_USERS,
     },
     {
-      label:     "Pending Actions",
-      value:     s.pendingVerifications.toLocaleString("en-IN"),
-      subtext:   "Applications need review",
-      icon:      AlertCircle,
-      accent:    s.pendingVerifications > 0 ? "text-amber-600" : "text-slate-900",
-      iconBg:    s.pendingVerifications > 0 ? "bg-amber-50" : "bg-slate-100",
-      iconColor: s.pendingVerifications > 0 ? "text-amber-500" : "text-slate-400",
-      border:    s.pendingVerifications > 0 ? "border-t-amber-500" : "border-t-slate-300",
+      label: "Pending Actions",
+      value: s.pendingVerifications.toLocaleString("en-IN"),
+      subtext: "Need review",
+      icon: AlertCircle,
+      trend: (s.pendingVerifications > 0 ? "down" : "neutral") as "down" | "neutral",
+      trendLabel: s.pendingVerifications > 0 ? "Requires action" : "All clear",
+      gradient: s.pendingVerifications > 0 ? "from-amber-50 to-orange-50/50" : "from-slate-50 to-gray-50/50",
+      iconClass: s.pendingVerifications > 0 ? "text-amber-600 bg-amber-100" : "text-slate-400 bg-slate-100",
+      valueClass: s.pendingVerifications > 0 ? "text-amber-700" : "text-slate-900",
+      href: ROUTES.ADMIN_LEADS,
     },
     {
-      label:     "Active Loans",
-      value:     s.activeLoans.toLocaleString("en-IN"),
-      subtext:   "Currently disbursed",
-      icon:      Activity,
-      accent:    "text-slate-900",
-      iconBg:    "bg-teal-50",
-      iconColor: "text-teal-600",
-      border:    "border-t-teal-500",
+      label: "Active Loans",
+      value: s.activeLoans.toLocaleString("en-IN"),
+      subtext: "Currently disbursed",
+      icon: Activity,
+      trend: "up" as const,
+      trendLabel: "Performing",
+      gradient: "from-teal-50 to-cyan-50/50",
+      iconClass: "text-teal-600 bg-teal-100",
+      href: ROUTES.ADMIN_LOANS,
     },
   ];
 }
@@ -102,134 +127,180 @@ const recoveryPct = (s: DashboardStats) =>
 
 // ─── Skeleton card ────────────────────────────────────────────────────────────
 
-function SkeletonCard() {
+function SkeletonCard({ index }: { index: number }) {
   return (
-    <div className="bg-white rounded-2xl border border-slate-100 shadow-sm p-5 animate-pulse">
-      <div className="flex items-start justify-between mb-4">
-        <div className="h-9 w-9 rounded-xl bg-slate-100" />
-        <div className="h-4 w-16 rounded-full bg-slate-100" />
-      </div>
-      <div className="space-y-2">
-        <div className="h-3 w-24 rounded bg-slate-100" />
-        <div className="h-7 w-32 rounded bg-slate-200" />
-        <div className="h-3 w-20 rounded bg-slate-100" />
-      </div>
-    </div>
-  );
-}
-
-// ─── Stat card ────────────────────────────────────────────────────────────────
-
-function StatCard({ card }: { card: StatCard }) {
-  const Icon = card.icon;
-  return (
-    <div
-      className={`
-        group relative bg-white rounded-2xl border border-slate-100 border-t-2 shadow-sm
-        hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 p-5
-        ${card.border}
-      `}
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ delay: index * 0.05 }}
+      className="bg-white rounded-2xl border border-slate-100 shadow-sm p-5 animate-pulse"
     >
-      <div className="flex items-start justify-between mb-4">
-        <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${card.iconBg}`}>
-          <Icon size={18} className={card.iconColor} />
-        </div>
-        <ArrowUpRight
-          size={15}
-          className="text-slate-300 group-hover:text-slate-400 transition-colors"
-        />
+      <div className="flex items-start justify-between mb-5">
+        <div className="w-10 h-10 rounded-xl bg-slate-100" />
+        <div className="w-20 h-4 rounded-full bg-slate-100" />
       </div>
+      <div className="space-y-2.5">
+        <div className="w-24 h-3 rounded-full bg-slate-100" />
+        <div className="w-32 h-7 rounded-lg bg-slate-200" />
+        <div className="w-20 h-3 rounded-full bg-slate-100" />
+      </div>
+    </motion.div>
+  );
+}
 
-      <p className="text-[11px] font-semibold uppercase tracking-widest text-slate-400 mb-1">
-        {card.label}
-      </p>
-      <p className={`text-[22px] font-bold leading-tight tracking-tight ${card.accent}`}>
-        {card.value}
-      </p>
-      <p className="text-[12px] text-slate-400 mt-1">{card.subtext}</p>
+// ─── Chart tooltip ────────────────────────────────────────────────────────────
+
+function ChartTooltip({ active, payload, label }: any) {
+  if (!active || !payload?.length) return null;
+  return (
+    <div className="bg-white border border-slate-200 rounded-xl shadow-lg px-3.5 py-2.5 text-xs">
+      <p className="font-bold text-slate-700 mb-2">{label}</p>
+      {payload.map((p: any) => (
+        <div key={p.name} className="flex items-center gap-2 mb-1 last:mb-0">
+          <span className="w-2 h-2 rounded-full shrink-0" style={{ background: p.color }} />
+          <span className="text-slate-500 capitalize">{p.name}:</span>
+          <span className="font-bold text-slate-800">{formatCurrency(p.value)}</span>
+        </div>
+      ))}
     </div>
   );
 }
 
-// ─── Recovery bar ─────────────────────────────────────────────────────────────
+// ─── Animated recovery bar ────────────────────────────────────────────────────
 
 function RecoveryBar({ stats }: { stats: DashboardStats }) {
   const pct = recoveryPct(stats);
-  const barColor =
-    pct >= 75 ? "bg-emerald-500" :
-    pct >= 40 ? "bg-amber-400"  :
-                "bg-rose-400";
-  const textColor =
-    pct >= 75 ? "text-emerald-600" :
-    pct >= 40 ? "text-amber-500"   :
-                "text-rose-500";
+  const barColor = pct >= 75 ? "bg-emerald-500" : pct >= 40 ? "bg-amber-400" : "bg-rose-400";
+  const textColor = pct >= 75 ? "text-emerald-600" : pct >= 40 ? "text-amber-500" : "text-rose-500";
 
   return (
-    <div className="bg-white rounded-2xl border border-slate-100 shadow-sm p-6">
-      <div className="flex items-start justify-between mb-5">
+    <motion.div
+      custom={3}
+      variants={sectionVariants}
+      initial="hidden"
+      animate="visible"
+      className="bg-white rounded-2xl border border-slate-200/70 shadow-sm p-6"
+    >
+      <div className="flex items-center justify-between mb-4">
         <div>
-          <p className="text-[13px] font-bold text-slate-800">Recovery Progress</p>
-          <p className="text-[12px] text-slate-400 mt-0.5">
-            {formatCurrency(stats.totalRecovered)} recovered of{" "}
-            {formatCurrency(stats.totalExposure)} total exposure
+          <p className="text-sm font-bold text-slate-800">Recovery Progress</p>
+          <p className="text-xs text-slate-400 mt-0.5">
+            {formatCurrency(stats.totalRecovered)} of {formatCurrency(stats.totalExposure)}
           </p>
         </div>
-        <span className={`text-2xl font-extrabold tabular-nums ${textColor}`}>
-          {pct}%
-        </span>
+        <div className="text-right">
+          <span className={`text-2xl font-black tabular-nums ${textColor}`}>{pct}%</span>
+          <p className="text-[10px] text-slate-400 mt-0.5">recovered</p>
+        </div>
       </div>
 
       <div className="h-2.5 w-full rounded-full bg-slate-100 overflow-hidden">
-        <div
-          className={`h-full rounded-full transition-all duration-700 ease-out ${barColor}`}
-          style={{ width: `${pct}%` }}
+        <motion.div
+          className={`h-full rounded-full ${barColor}`}
+          initial={{ width: 0 }}
+          animate={{ width: `${pct}%` }}
+          transition={{ duration: 1.2, ease: "easeOut", delay: 0.3 }}
         />
       </div>
 
-      <div className="flex justify-between mt-2.5 text-[11px] text-slate-400">
+      <div className="flex justify-between mt-2 text-[10px] text-slate-400">
         <span>₹0</span>
         <span>{formatCurrency(stats.totalExposure)}</span>
       </div>
-    </div>
+    </motion.div>
   );
 }
 
-// ─── Secondary metrics row ────────────────────────────────────────────────────
+// ─── Quick actions ────────────────────────────────────────────────────────────
+
+function QuickActions({ pendingCount }: { pendingCount: number }) {
+  const actions = [
+    {
+      label: "Review Applications",
+      desc: `${pendingCount} pending`,
+      href: ROUTES.ADMIN_LEADS,
+      icon: Users,
+      colorClass: "text-blue-600 bg-blue-50 border-blue-100 hover:border-blue-200",
+      dot: pendingCount > 0,
+    },
+    {
+      label: "Approve Repayments",
+      desc: "Check pending",
+      href: ROUTES.ADMIN_REPAYMENTS,
+      icon: CheckCircle,
+      colorClass: "text-emerald-600 bg-emerald-50 border-emerald-100 hover:border-emerald-200",
+      dot: false,
+    },
+  ];
+
+  return (
+    <motion.div
+      custom={4}
+      variants={sectionVariants}
+      initial="hidden"
+      animate="visible"
+      className="bg-white rounded-2xl border border-slate-200/70 shadow-sm p-5"
+    >
+      <p className="text-[10px] font-bold uppercase tracking-[0.13em] text-slate-400 mb-3">
+        Quick Actions
+      </p>
+      <div className="space-y-2">
+        {actions.map((a) => (
+          <motion.div key={a.href} whileHover={{ x: 2 }} transition={{ duration: 0.12 }}>
+            <Link
+              to={a.href}
+              className={`flex items-center gap-3 p-3 rounded-xl border transition-all hover:shadow-sm ${a.colorClass}`}
+            >
+              <a.icon size={15} />
+              <div className="flex-1 min-w-0">
+                <p className="text-[12px] font-semibold truncate">{a.label}</p>
+                <p className="text-[10px] opacity-60">{a.desc}</p>
+              </div>
+              {a.dot && <span className="w-2 h-2 rounded-full bg-amber-400 shrink-0" />}
+              <ArrowRight size={13} className="opacity-30 shrink-0" />
+            </Link>
+          </motion.div>
+        ))}
+      </div>
+    </motion.div>
+  );
+}
+
+// ─── Bottom metric pills ──────────────────────────────────────────────────────
 
 function MetricPill({
-  label,
-  value,
-  color,
+  label, value, color, bg, border, index,
 }: {
-  label: string;
-  value: string;
-  color: string;
+  label: string; value: number; color: string;
+  bg: string; border: string; index: number;
 }) {
   return (
-    <div className="flex-1 min-w-0 bg-white rounded-2xl border border-slate-100 shadow-sm px-5 py-4">
-      <p className="text-[11px] font-semibold uppercase tracking-widest text-slate-400 mb-1">
-        {label}
+    <motion.div
+      custom={index}
+      variants={sectionVariants}
+      initial="hidden"
+      animate="visible"
+      className={`${bg} border ${border} rounded-2xl px-5 py-4`}
+    >
+      <p className="text-[10px] font-bold uppercase tracking-[0.13em] text-slate-400 mb-1">{label}</p>
+      <p className={`text-2xl font-black tabular-nums ${color}`}>
+        {value.toLocaleString("en-IN")}
       </p>
-      <p className={`text-xl font-bold tabular-nums ${color}`}>{value}</p>
-    </div>
+    </motion.div>
   );
 }
 
 // ─── AdminDashboard ───────────────────────────────────────────────────────────
 
 const EMPTY: DashboardStats = {
-  totalExposure: 0,
-  activeLoans: 0,
-  pendingRecoveries: 0,
-  totalRecovered: 0,
-  totalUsers: 0,
-  pendingVerifications: 0,
+  totalExposure: 0, activeLoans: 0, pendingRecoveries: 0,
+  totalRecovered: 0, totalUsers: 0, pendingVerifications: 0,
 };
 
 export function AdminDashboard() {
-  const [stats, setStats]   = useState<DashboardStats>(EMPTY);
+  const [stats, setStats] = useState<DashboardStats>(EMPTY);
   const [loading, setLoading] = useState(true);
-  const [error, setError]   = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
   const load = () => {
     setLoading(true);
@@ -245,78 +316,159 @@ export function AdminDashboard() {
   const cards = buildCards(stats);
 
   return (
-    <div className="space-y-6">
+    <motion.div
+      variants={pageVariants}
+      initial="hidden"
+      animate="visible"
+      className="p-6 sm:p-8 space-y-6 max-w-[1400px] mx-auto"
+    >
 
-        {/* ── Page header ── */}
-        <div className="flex items-center justify-between">
-          <div>
-            <h2 className="text-[17px] font-bold text-slate-800 leading-tight">
-              Overview
-            </h2>
-            <p className="text-[12px] text-slate-400 mt-0.5">
-              Platform-wide financial summary
-            </p>
-          </div>
-          <button
-            onClick={load}
-            disabled={loading}
-            className="flex items-center gap-2 px-3.5 py-2 rounded-xl text-[12px] font-semibold text-slate-600 bg-white border border-slate-200 hover:bg-slate-50 disabled:opacity-50 transition-colors shadow-sm"
-          >
-            <RefreshCw size={13} className={loading ? "animate-spin" : ""} />
-            Refresh
-          </button>
+      {/* ── Header ── */}
+      <motion.div
+        custom={0}
+        variants={sectionVariants}
+        initial="hidden"
+        animate="visible"
+        className="flex items-center justify-between"
+      >
+        <div>
+          <h1 className="text-xl font-semibold text-slate-900 tracking-tight">Overview</h1>
+          <p className="text-xs text-slate-400 mt-0.5">Platform-wide financial summary</p>
         </div>
+        <motion.button
+          whileHover={{ scale: 1.02 }}
+          whileTap={{ scale: 0.97 }}
+          onClick={load}
+          disabled={loading}
+          className="flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-semibold text-slate-600 bg-white border border-slate-200 hover:bg-slate-50 disabled:opacity-50 transition-colors shadow-sm"
+        >
+          <RefreshCw size={12} className={loading ? "animate-spin" : ""} />
+          Refresh
+        </motion.button>
+      </motion.div>
 
-        {/* ── Error banner ── */}
+      {/* ── Error banner ── */}
+      <AnimatePresence>
         {error && (
-          <div className="flex items-center justify-between gap-3 rounded-2xl border border-red-200 bg-red-50 px-4 py-3">
-            <div className="flex items-center gap-2.5 text-[13px] text-red-700">
-              <AlertCircle size={15} className="shrink-0" />
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: "auto" }}
+            exit={{ opacity: 0, height: 0 }}
+            className="flex items-center justify-between gap-3 rounded-2xl border border-red-200 bg-red-50 px-4 py-3"
+          >
+            <div className="flex items-center gap-2 text-sm text-red-700">
+              <AlertCircle size={14} className="shrink-0" />
               {error}
             </div>
-            <button
-              onClick={load}
-              className="text-[12px] font-semibold text-red-600 hover:text-red-700 underline underline-offset-2 shrink-0"
-            >
+            <button onClick={load} className="text-xs font-semibold text-red-600 hover:underline shrink-0">
               Retry
             </button>
-          </div>
+          </motion.div>
         )}
+      </AnimatePresence>
 
-        {/* ── Stat cards ── */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
+      {/* ── Stat cards grid ── */}
+      <motion.div
+        custom={1}
+        variants={sectionVariants}
+        initial="hidden"
+        animate="visible"
+      >
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
           {loading
-            ? Array.from({ length: 6 }).map((_, i) => <SkeletonCard key={i} />)
-            : cards.map((card) => <StatCard key={card.label} card={card} />)
+            ? Array.from({ length: 6 }).map((_, i) => <SkeletonCard key={i} index={i} />)
+            : cards.map((card, i) => <StatCard key={card.label} {...card} index={i} />)
           }
         </div>
+      </motion.div>
 
-        {/* ── Recovery progress ── */}
-        {!loading && !error && stats.totalExposure > 0 && (
-          <RecoveryBar stats={stats} />
-        )}
-
-        {/* ── Secondary metrics ── */}
-        {!loading && !error && (
-          <div className="flex flex-col sm:flex-row gap-4">
-            <MetricPill
-              label="Active Loans"
-              value={stats.activeLoans.toLocaleString("en-IN")}
-              color="text-teal-600"
-            />
-            <MetricPill
-              label="Pending Verifications"
-              value={stats.pendingVerifications.toLocaleString("en-IN")}
-              color={stats.pendingVerifications > 0 ? "text-amber-600" : "text-slate-700"}
-            />
-            <MetricPill
-              label="Registered Users"
-              value={stats.totalUsers.toLocaleString("en-IN")}
-              color="text-indigo-600"
-            />
+      {/* ── Chart + right panel ── */}
+      {!loading && !error && (
+        <motion.div
+          custom={2}
+          variants={sectionVariants}
+          initial="hidden"
+          animate="visible"
+          className="grid grid-cols-1 lg:grid-cols-3 gap-4"
+        >
+          {/* Area chart */}
+          <div className="lg:col-span-2 bg-white rounded-2xl border border-slate-200/70 shadow-sm p-5">
+            <div className="flex items-center justify-between mb-5">
+              <div>
+                <p className="text-sm font-semibold text-slate-800">Portfolio Trend</p>
+                <p className="text-xs text-slate-400 mt-0.5">Disbursed vs Recovered — last 6 months</p>
+              </div>
+              <div className="flex items-center gap-4 text-[10px] font-semibold">
+                <span className="flex items-center gap-1.5 text-blue-600">
+                  <span className="w-3 h-1.5 rounded-full bg-blue-500" />
+                  Disbursed
+                </span>
+                <span className="flex items-center gap-1.5 text-emerald-600">
+                  <span className="w-3 h-1.5 rounded-full bg-emerald-500" />
+                  Recovered
+                </span>
+              </div>
+            </div>
+            <ResponsiveContainer width="100%" height={210}>
+              <AreaChart data={SPARKLINE} margin={{ top: 4, right: 4, left: -20, bottom: 0 }}>
+                <defs>
+                  <linearGradient id="gD" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.18} />
+                    <stop offset="95%" stopColor="#3b82f6" stopOpacity={0} />
+                  </linearGradient>
+                  <linearGradient id="gR" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="#10b981" stopOpacity={0.18} />
+                    <stop offset="95%" stopColor="#10b981" stopOpacity={0} />
+                  </linearGradient>
+                </defs>
+                <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" vertical={false} />
+                <XAxis dataKey="month" tick={{ fontSize: 10, fill: "#94a3b8" }} axisLine={false} tickLine={false} />
+                <YAxis tick={{ fontSize: 10, fill: "#94a3b8" }} axisLine={false} tickLine={false} tickFormatter={(v) => `₹${(v / 1000).toFixed(0)}k`} />
+                <Tooltip content={<ChartTooltip />} cursor={{ stroke: "#e2e8f0", strokeWidth: 1 }} />
+                <Area type="monotone" dataKey="disbursed" stroke="#3b82f6" strokeWidth={2.5} fill="url(#gD)" dot={false} activeDot={{ r: 4, fill: "#3b82f6" }} />
+                <Area type="monotone" dataKey="recovered" stroke="#10b981" strokeWidth={2.5} fill="url(#gR)" dot={false} activeDot={{ r: 4, fill: "#10b981" }} />
+              </AreaChart>
+            </ResponsiveContainer>
           </div>
-        )}
 
-      </div>
+          {/* Right column */}
+          <div className="space-y-4">
+            {stats.totalExposure > 0 && <RecoveryBar stats={stats} />}
+            <QuickActions pendingCount={stats.pendingVerifications} />
+          </div>
+        </motion.div>
+      )}
+
+      {/* ── Bottom metric pills ── */}
+      {!loading && !error && (
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <MetricPill
+            label="Active Loans"
+            value={stats.activeLoans}
+            color="text-teal-600"
+            bg="bg-teal-50"
+            border="border-teal-100"
+            index={5}
+          />
+          <MetricPill
+            label="Pending Verifications"
+            value={stats.pendingVerifications}
+            color={stats.pendingVerifications > 0 ? "text-amber-600" : "text-slate-700"}
+            bg={stats.pendingVerifications > 0 ? "bg-amber-50" : "bg-slate-50"}
+            border={stats.pendingVerifications > 0 ? "border-amber-100" : "border-slate-100"}
+            index={6}
+          />
+          <MetricPill
+            label="Registered Users"
+            value={stats.totalUsers}
+            color="text-violet-600"
+            bg="bg-violet-50"
+            border="border-violet-100"
+            index={7}
+          />
+        </div>
+      )}
+
+    </motion.div>
   );
 }

@@ -56,9 +56,7 @@ export const getUsersByRole = async (role: AppUser["role"]): Promise<AppUser[]> 
 
 /** Return the total number of user documents (used in dashboard stats). */
 export const getUserCount = async (): Promise<number> => {
-  console.log("[user.service] getUserCount: Fetching from Firestore...");
   const snap = await getDocs(collection(db, COL));
-  console.log(`[user.service] getUserCount: Found ${snap.size} users`);
   return snap.size;
 };
 

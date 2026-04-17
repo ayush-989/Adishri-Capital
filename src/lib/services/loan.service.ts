@@ -49,20 +49,24 @@ export const getAllLoans = async (): Promise<Loan[]> => {
   return snap.docs.map((d) => toLoan(d.id, d.data()));
 };
 
-/** Fetch all loans for a specific borrower. */
+/** Fetch all loans for a specific borrower. Sorted client-side to avoid composite index requirement. */
 export const getLoansByUser = async (userId: string): Promise<Loan[]> => {
   const snap = await getDocs(
-    query(collection(db, COL), where("userId", "==", userId), orderBy("disbursedAt", "desc"))
+    query(collection(db, COL), where("userId", "==", userId))
   );
-  return snap.docs.map((d) => toLoan(d.id, d.data()));
+  return snap.docs
+    .map((d) => toLoan(d.id, d.data()))
+    .sort((a, b) => (b.disbursedAt ?? "").localeCompare(a.disbursedAt ?? ""));
 };
 
-/** Fetch all loans with a specific status ("active" | "closed" | "defaulted"). */
+/** Fetch all loans with a specific status. Sorted client-side to avoid composite index requirement. */
 export const getLoansByStatus = async (status: LoanStatus): Promise<Loan[]> => {
   const snap = await getDocs(
-    query(collection(db, COL), where("status", "==", status), orderBy("disbursedAt", "desc"))
+    query(collection(db, COL), where("status", "==", status))
   );
-  return snap.docs.map((d) => toLoan(d.id, d.data()));
+  return snap.docs
+    .map((d) => toLoan(d.id, d.data()))
+    .sort((a, b) => (b.disbursedAt ?? "").localeCompare(a.disbursedAt ?? ""));
 };
 
 // ─── Real-time Subscriptions ──────────────────────────────────────────────────
@@ -77,17 +81,17 @@ export const subscribeToLoans = (
   );
 };
 
-/** Subscribe to all active loans only. */
+/** Subscribe to all active loans only. Sorted client-side to avoid composite index requirement. */
 export const subscribeToActiveLoans = (
   callback: (loans: Loan[]) => void
 ): Unsubscribe => {
-  const q = query(
-    collection(db, COL),
-    where("status", "==", "active"),
-    orderBy("disbursedAt", "desc")
-  );
+  const q = query(collection(db, COL), where("status", "==", "active"));
   return onSnapshot(q, (snap) =>
-    callback(snap.docs.map((d) => toLoan(d.id, d.data())))
+    callback(
+      snap.docs
+        .map((d) => toLoan(d.id, d.data()))
+        .sort((a, b) => (b.disbursedAt ?? "").localeCompare(a.disbursedAt ?? ""))
+    )
   );
 };
 

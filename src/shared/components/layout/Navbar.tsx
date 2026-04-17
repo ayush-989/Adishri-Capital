@@ -1,74 +1,182 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
+import { AnimatePresence, motion } from "framer-motion";
 import { useAuth } from "../../../hooks/useAuth";
-import { Landmark, Menu, X } from "lucide-react";
-import { ROUTES } from "../../../utils/constants";
+import { cn } from "../ui/Button";
+import { APP_NAME, ROUTES } from "../../../utils/constants";
+import {
+  Landmark,
+  Search,
+  Bell,
+  ChevronDown,
+  LogOut,
+  LayoutDashboard,
+  FileText,
+  User,
+  Menu,
+  X,
+} from "lucide-react";
 
-const NAV_LINKS = [
-  { label: "Home", href: ROUTES.HOME },
-  { label: "Apply Now", href: ROUTES.LOAN_APPLICATION },
-  { label: "Track Application", href: ROUTES.USER_DASHBOARD },
+/* ─── Public Links ───────────────── */
+const PUBLIC_LINKS = [
+  { label: "Track Application", href: ROUTES.USER_DASHBOARD, icon: Search },
+  { label: "Apply for Loan", href: ROUTES.LOAN_APPLICATION, icon: FileText },
 ];
 
+/* ─── Helper ───────────────── */
+const isActive = (href: string, pathname: string) => pathname === href;
+
+/* ─── Navbar ───────────────── */
 export function Navbar() {
-  const { user } = useAuth();
-  const location = useLocation();
-  const [menuOpen, setMenuOpen] = useState(false);
+  const { user, logout } = useAuth();
+  const { pathname } = useLocation();
+
+  const [searchOpen, setSearchOpen] = useState(false);
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
+
+  const dropdownRef = useRef<HTMLDivElement>(null);
+  const searchRef = useRef<HTMLInputElement>(null);
+
+  const isAdmin = user?.role === "admin";
+  const initial = (user?.email?.[0] ?? "U").toUpperCase();
+
+  /* Close dropdown */
+  useEffect(() => {
+    const handler = (e: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
+        setDropdownOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, []);
+
+  /* Close mobile on route change */
+  useEffect(() => {
+    setMobileOpen(false);
+  }, [pathname]);
+
+  /* Focus search */
+  useEffect(() => {
+    if (searchOpen) setTimeout(() => searchRef.current?.focus(), 100);
+  }, [searchOpen]);
 
   return (
-    <nav className="sticky top-0 z-40 w-full bg-white/90 backdrop-blur-lg border-b border-slate-200/70 shadow-sm relative">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between h-16 items-center">
-          {/* Logo */}
-          <Link to={ROUTES.HOME} className="flex items-center gap-2 shrink-0">
-            <div className="w-8 h-8 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-lg flex items-center justify-center">
-              <Landmark className="h-4 w-4 text-white" />
-            </div>
-            <span className="font-bold text-lg text-slate-900 tracking-tight">
-              Adishri <span className="text-blue-600">Capitals</span>
-            </span>
-          </Link>
+    <nav className="sticky top-0 z-40 w-full bg-white/80 backdrop-blur-xl border-b border-slate-200">
+      <div className="max-w-7xl mx-auto px-4 flex items-center justify-between h-14">
 
-          {/* Hamburger — always visible */}
-          <button
-            className="p-2 rounded-lg text-slate-600 hover:bg-slate-100 transition-colors"
-            onClick={() => setMenuOpen(!menuOpen)}
-            aria-label="Toggle menu"
-          >
-            {menuOpen ? <X size={22} /> : <Menu size={22} />}
+        {/* Logo */}
+        <Link to={ROUTES.HOME} className="flex items-center gap-2">
+          <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-violet-600 rounded-lg flex items-center justify-center">
+            <Landmark size={16} className="text-white" />
+          </div>
+          <span className="font-semibold text-sm hidden sm:block">
+            {APP_NAME}
+          </span>
+        </Link>
+
+        {/* Desktop Links */}
+        <div className="hidden md:flex gap-2">
+          {PUBLIC_LINKS.map((item) => (
+            <Link
+              key={item.href}
+              to={item.href}
+              className={cn(
+                "px-3 py-2 text-sm rounded-lg",
+                isActive(item.href, pathname)
+                  ? "bg-blue-50 text-blue-600"
+                  : "text-gray-600 hover:bg-gray-100"
+              )}
+            >
+              {item.label}
+            </Link>
+          ))}
+        </div>
+
+        {/* Right Section */}
+        <div className="flex items-center gap-2">
+
+          {/* Search */}
+          <div className="hidden md:block">
+            {searchOpen ? (
+              <input
+                ref={searchRef}
+                placeholder="Search..."
+                className="border px-2 py-1 rounded-md text-sm"
+                onBlur={() => setSearchOpen(false)}
+              />
+            ) : (
+              <button onClick={() => setSearchOpen(true)}>
+                <Search size={18} />
+              </button>
+            )}
+          </div>
+
+          {/* Notification */}
+          {user && (
+            <button className="relative">
+              <Bell size={18} />
+              <span className="absolute top-0 right-0 w-2 h-2 bg-red-500 rounded-full" />
+            </button>
+          )}
+
+          {/* Profile */}
+          {user ? (
+            <div ref={dropdownRef} className="relative">
+              <button onClick={() => setDropdownOpen(!dropdownOpen)}>
+                <div className="w-7 h-7 bg-blue-600 text-white flex items-center justify-center rounded-full text-xs">
+                  {initial}
+                </div>
+              </button>
+
+              <AnimatePresence>
+                {dropdownOpen && (
+                  <motion.div
+                    initial={{ opacity: 0, y: -5 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0 }}
+                    className="absolute right-0 mt-2 w-48 bg-white shadow-lg rounded-lg p-2"
+                  >
+                    {isAdmin && (
+                      <Link to={ROUTES.ADMIN_DASHBOARD} className="block px-3 py-2 text-sm hover:bg-gray-100">
+                        Admin Dashboard
+                      </Link>
+                    )}
+                    <Link to={ROUTES.USER_DASHBOARD} className="block px-3 py-2 text-sm hover:bg-gray-100">
+                      My Applications
+                    </Link>
+                    <button
+                      onClick={logout}
+                      className="w-full text-left px-3 py-2 text-sm text-red-500 hover:bg-red-50"
+                    >
+                      Logout
+                    </button>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
+          ) : (
+            <Link to={ROUTES.LOAN_APPLICATION} className="bg-blue-600 text-white px-3 py-1 rounded-md text-sm">
+              Apply
+            </Link>
+          )}
+
+          {/* Mobile */}
+          <button className="md:hidden" onClick={() => setMobileOpen(!mobileOpen)}>
+            {mobileOpen ? <X size={20} /> : <Menu size={20} />}
           </button>
         </div>
       </div>
 
-      {/* Dropdown Menu */}
-      {menuOpen && (
-        <div className="absolute top-16 right-0 w-56 bg-white border border-slate-200 rounded-xl shadow-xl px-2 py-2 z-50 mr-4">
-          {NAV_LINKS.map((link) => {
-            const isActive = location.pathname === link.href;
-            return (
-              <Link
-                key={link.href}
-                to={link.href}
-                onClick={() => setMenuOpen(false)}
-                className={`block px-4 py-2.5 rounded-lg text-sm font-medium transition-colors ${
-                  isActive
-                    ? "bg-blue-50 text-blue-700"
-                    : "text-slate-700 hover:bg-slate-50"
-                }`}
-              >
-                {link.label}
-              </Link>
-            );
-          })}
-          {user && (
-            <Link
-              to={ROUTES.ADMIN_DASHBOARD}
-              onClick={() => setMenuOpen(false)}
-              className="block px-4 py-2.5 rounded-lg text-sm font-medium text-slate-700 hover:bg-slate-50 border-t border-slate-100 mt-1 pt-3"
-            >
-              Admin Panel
+      {/* Mobile Menu */}
+      {mobileOpen && (
+        <div className="md:hidden bg-white border-t p-3">
+          {PUBLIC_LINKS.map((item) => (
+            <Link key={item.href} to={item.href} className="block py-2">
+              {item.label}
             </Link>
-          )}
+          ))}
         </div>
       )}
     </nav>
