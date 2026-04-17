@@ -1,184 +1,122 @@
 import { useState, useRef, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { AnimatePresence, motion } from "framer-motion";
 import { useAuth } from "../../../hooks/useAuth";
-import { cn } from "../ui/Button";
-import { APP_NAME, ROUTES } from "../../../utils/constants";
-import {
-  Landmark,
-  Search,
-  Bell,
-  ChevronDown,
-  LogOut,
-  LayoutDashboard,
-  FileText,
-  User,
-  Menu,
-  X,
-} from "lucide-react";
+import { Landmark, MoreVertical, X, Settings, LogOut, LayoutDashboard, Search, FileText, Home } from "lucide-react";
+import { ROUTES } from "../../../utils/constants";
 
-/* ─── Public Links ───────────────── */
-const PUBLIC_LINKS = [
-  { label: "Track Application", href: ROUTES.USER_DASHBOARD, icon: Search },
-  { label: "Apply for Loan", href: ROUTES.LOAN_APPLICATION, icon: FileText },
+const NAV_LINKS = [
+  { label: "Home",       href: ROUTES.HOME, icon: Home },
+  { label: "Apply Now",  href: ROUTES.LOAN_APPLICATION, icon: FileText },
+  { label: "Track Loan", href: ROUTES.USER_DASHBOARD, icon: Search },
 ];
 
-/* ─── Helper ───────────────── */
-const isActive = (href: string, pathname: string) => pathname === href;
-
-/* ─── Navbar ───────────────── */
 export function Navbar() {
   const { user, logout } = useAuth();
   const { pathname } = useLocation();
-
-  const [searchOpen, setSearchOpen] = useState(false);
-  const [dropdownOpen, setDropdownOpen] = useState(false);
-  const [mobileOpen, setMobileOpen] = useState(false);
-
+  const [menuOpen, setMenuOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
-  const searchRef = useRef<HTMLInputElement>(null);
 
   const isAdmin = user?.role === "admin";
-  const initial = (user?.email?.[0] ?? "U").toUpperCase();
 
-  /* Close dropdown */
   useEffect(() => {
     const handler = (e: MouseEvent) => {
       if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
-        setDropdownOpen(false);
+        setMenuOpen(false);
       }
     };
     document.addEventListener("mousedown", handler);
     return () => document.removeEventListener("mousedown", handler);
   }, []);
 
-  /* Close mobile on route change */
   useEffect(() => {
-    setMobileOpen(false);
+    setMenuOpen(false);
   }, [pathname]);
 
-  /* Focus search */
-  useEffect(() => {
-    if (searchOpen) setTimeout(() => searchRef.current?.focus(), 100);
-  }, [searchOpen]);
-
   return (
-    <nav className="sticky top-0 z-40 w-full bg-white/80 backdrop-blur-xl border-b border-slate-200">
-      <div className="max-w-7xl mx-auto px-4 flex items-center justify-between h-14">
+    <nav className="sticky top-0 z-40 w-full bg-white border-b border-slate-200 shadow-sm backdrop-blur-md bg-white/90">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex justify-between items-center h-16">
 
-        {/* Logo */}
-        <Link to={ROUTES.HOME} className="flex items-center gap-2">
-          <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-violet-600 rounded-lg flex items-center justify-center">
-            <Landmark size={16} className="text-white" />
-          </div>
-          <span className="font-semibold text-sm hidden sm:block">
-            {APP_NAME}
-          </span>
-        </Link>
+          {/* Logo */}
+          <Link to={ROUTES.HOME} className="flex items-center gap-2.5 shrink-0">
+            <div className="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center shadow-lg shadow-blue-600/20 ring-4 ring-blue-50">
+              <Landmark className="h-5 w-5 text-white" strokeWidth={2.5} />
+            </div>
+            <span className="font-black text-xl text-slate-900 tracking-tight">
+              Adishri <span className="text-blue-600">Capitals</span>
+            </span>
+          </Link>
 
-        {/* Desktop Links */}
-        <div className="hidden md:flex gap-2">
-          {PUBLIC_LINKS.map((item) => (
-            <Link
-              key={item.href}
-              to={item.href}
-              className={cn(
-                "px-3 py-2 text-sm rounded-lg",
-                isActive(item.href, pathname)
-                  ? "bg-blue-50 text-blue-600"
-                  : "text-gray-600 hover:bg-gray-100"
-              )}
+          {/* 3 dots Menu (Visible Everywhere) */}
+          <div className="relative" ref={dropdownRef}>
+            <button
+              className={`p-2 rounded-xl transition-all duration-300 ${menuOpen ? 'bg-slate-900 text-white shadow-lg' : 'text-slate-600 hover:bg-slate-100'}`}
+              onClick={() => setMenuOpen(!menuOpen)}
+              aria-label="Toggle menu"
             >
-              {item.label}
-            </Link>
-          ))}
-        </div>
-
-        {/* Right Section */}
-        <div className="flex items-center gap-2">
-
-          {/* Search */}
-          <div className="hidden md:block">
-            {searchOpen ? (
-              <input
-                ref={searchRef}
-                placeholder="Search..."
-                className="border px-2 py-1 rounded-md text-sm"
-                onBlur={() => setSearchOpen(false)}
-              />
-            ) : (
-              <button onClick={() => setSearchOpen(true)}>
-                <Search size={18} />
-              </button>
-            )}
-          </div>
-
-          {/* Notification */}
-          {user && (
-            <button className="relative">
-              <Bell size={18} />
-              <span className="absolute top-0 right-0 w-2 h-2 bg-red-500 rounded-full" />
+              {menuOpen ? <X size={22} /> : <MoreVertical size={24} />}
             </button>
-          )}
 
-          {/* Profile */}
-          {user ? (
-            <div ref={dropdownRef} className="relative">
-              <button onClick={() => setDropdownOpen(!dropdownOpen)}>
-                <div className="w-7 h-7 bg-blue-600 text-white flex items-center justify-center rounded-full text-xs">
-                  {initial}
+            {/* Dropdown Menu */}
+            {menuOpen && (
+              <div className="absolute top-14 right-0 w-64 bg-white border border-slate-100 rounded-3xl shadow-[0_20px_50px_rgba(0,0,0,0.1)] p-3 z-50 animate-in fade-in zoom-in-95 duration-200 origin-top-right">
+                <div className="px-4 py-3 mb-2 border-b border-slate-50">
+                  <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Navigation</p>
                 </div>
-              </button>
+                
+                <div className="space-y-1">
+                  {NAV_LINKS.map((link) => {
+                    const active = pathname === link.href;
+                    return (
+                      <Link
+                        key={link.href}
+                        to={link.href}
+                        className={`flex items-center gap-3 px-4 py-3 rounded-2xl text-sm font-bold transition-all ${
+                          active ? "bg-blue-600 text-white shadow-lg shadow-blue-600/20" : "text-slate-600 hover:bg-slate-50 hover:text-blue-600"
+                        }`}
+                      >
+                        <link.icon size={18} strokeWidth={active ? 2.5 : 2} />
+                        {link.label}
+                      </Link>
+                    );
+                  })}
+                </div>
 
-              <AnimatePresence>
-                {dropdownOpen && (
-                  <motion.div
-                    initial={{ opacity: 0, y: -5 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0 }}
-                    className="absolute right-0 mt-2 w-48 bg-white shadow-lg rounded-lg p-2"
-                  >
+                {user && (
+                  <div className="mt-4 pt-4 border-t border-slate-50 space-y-1">
+                    <p className="px-4 mb-2 text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Account</p>
                     {isAdmin && (
-                      <Link to={ROUTES.ADMIN_DASHBOARD} className="block px-3 py-2 text-sm hover:bg-gray-100">
-                        Admin Dashboard
+                      <Link
+                        to={ROUTES.ADMIN_DASHBOARD}
+                        className="flex items-center gap-3 px-4 py-3 rounded-2xl text-sm font-bold text-slate-600 hover:bg-slate-50 hover:text-blue-600 transition-all"
+                      >
+                        <LayoutDashboard size={18} />
+                        Admin Panel
                       </Link>
                     )}
-                    <Link to={ROUTES.USER_DASHBOARD} className="block px-3 py-2 text-sm hover:bg-gray-100">
-                      My Applications
-                    </Link>
                     <button
                       onClick={logout}
-                      className="w-full text-left px-3 py-2 text-sm text-red-500 hover:bg-red-50"
+                      className="flex items-center gap-3 w-full px-4 py-3 rounded-2xl text-sm font-bold text-red-500 hover:bg-red-50 transition-all text-left"
                     >
+                      <LogOut size={18} />
                       Logout
                     </button>
-                  </motion.div>
+                  </div>
                 )}
-              </AnimatePresence>
-            </div>
-          ) : (
-            <Link to={ROUTES.LOAN_APPLICATION} className="bg-blue-600 text-white px-3 py-1 rounded-md text-sm">
-              Apply
-            </Link>
-          )}
 
-          {/* Mobile */}
-          <button className="md:hidden" onClick={() => setMobileOpen(!mobileOpen)}>
-            {mobileOpen ? <X size={20} /> : <Menu size={20} />}
-          </button>
+                <div className="mt-4 p-2">
+                  <Link
+                    to={ROUTES.LOAN_APPLICATION}
+                    className="flex items-center justify-center h-12 w-full bg-slate-900 hover:bg-blue-600 text-white font-black rounded-2xl text-sm transition-all shadow-lg active:scale-95"
+                  >
+                    Quick Apply
+                  </Link>
+                </div>
+              </div>
+            )}
+          </div>
         </div>
       </div>
-
-      {/* Mobile Menu */}
-      {mobileOpen && (
-        <div className="md:hidden bg-white border-t p-3">
-          {PUBLIC_LINKS.map((item) => (
-            <Link key={item.href} to={item.href} className="block py-2">
-              {item.label}
-            </Link>
-          ))}
-        </div>
-      )}
     </nav>
   );
 }

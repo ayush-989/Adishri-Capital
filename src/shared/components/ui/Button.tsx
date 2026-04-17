@@ -1,4 +1,4 @@
-import { ButtonHTMLAttributes, forwardRef } from "react";
+import { type ButtonHTMLAttributes, forwardRef } from "react";
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 
@@ -15,24 +15,24 @@ export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 const Button = forwardRef<HTMLButtonElement, ButtonProps>(
   ({ className, variant = "primary", size = "md", isLoading, children, ...props }, ref) => {
     const variants = {
-      primary: "bg-blue-600 text-white hover:bg-blue-700 shadow-sm border border-transparent",
-      secondary: "bg-slate-100 text-slate-900 hover:bg-slate-200 border border-transparent",
-      outline: "bg-transparent border border-slate-300 text-slate-700 hover:bg-slate-50",
-      ghost: "bg-transparent border-transparent text-slate-700 hover:bg-slate-100",
-      danger: "bg-red-600 text-white hover:bg-red-700 shadow-sm border border-transparent",
+      primary: "bg-primary-600 text-white hover:bg-primary-700 shadow-sm border border-transparent hover:shadow-md active:scale-[0.98]",
+      secondary: "bg-gray-100 text-gray-900 hover:bg-gray-200 border border-transparent active:scale-[0.98]",
+      outline: "bg-transparent border border-gray-200 text-gray-700 hover:bg-gray-50 active:scale-[0.98]",
+      ghost: "bg-transparent border-transparent text-gray-700 hover:bg-gray-100 active:scale-[0.98]",
+      danger: "bg-red-600 text-white hover:bg-red-700 shadow-sm border border-transparent active:scale-[0.98]",
     };
 
     const sizes = {
-      sm: "h-8 px-3 text-xs",
-      md: "h-10 px-4 py-2",
-      lg: "h-12 px-8 text-lg",
+      sm: "h-8 px-4 text-xs tracking-wide",
+      md: "h-11 px-5 py-2 text-sm font-medium",
+      lg: "h-14 px-8 text-base font-medium",
     };
 
     return (
       <button
         ref={ref}
         className={cn(
-          "inline-flex items-center justify-center rounded-lg font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 disabled:pointer-events-none disabled:opacity-50",
+          "inline-flex items-center justify-center rounded-xl font-medium transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50",
           variants[variant],
           sizes[size],
           className

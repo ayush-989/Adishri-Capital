@@ -1,5 +1,5 @@
 import { uploadFile } from "../firebase/storage";
-import { createApplication, getApplication } from "../services/application.service";
+import { createApplication, getApplication, findApplicationByPhoneAndPan } from "../services/application.service";
 import { createTransaction } from "../services/transaction.service";
 import { generateLoanId, generateTxnId } from "../../utils/helpers";
 import { LOAN_STATUS, PROCESSING_FEE_AMOUNT } from "../../utils/constants";
@@ -39,6 +39,9 @@ export const submitLoanApplication = async (
 
 export const trackApplication = (id: string) =>
   getApplication(id.trim().toUpperCase());
+
+export const trackByDetails = (phone: string, pan: string) =>
+  findApplicationByPhoneAndPan(phone.trim(), pan.trim().toUpperCase());
 
 export const submitProcessingFee = async (
   loanId: string,

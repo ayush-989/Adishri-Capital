@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, useLocation } from "react-router-dom";
 import { AuthProvider } from "./context/AuthContext";
 import { ToastContainer } from "react-toastify";
 import { ROUTES } from "./utils/constants";
@@ -12,7 +12,7 @@ import { Dashboard as UserDashboard } from "./features/user/pages/Dashboard";
 import { LoanApplicationForm } from "./features/user/pages/LoanApplicationForm";
 import { ProcessingFee } from "./features/user/pages/ProcessingFee";
 
-// Admin pages  (no longer wrap themselves in AdminLayout)
+// Admin pages
 import { AdminDashboard } from "./features/admin/pages/AdminDashboard";
 import { LeadManagement } from "./features/admin/pages/LeadManagement";
 import { ApplicationDetails } from "./features/admin/pages/ApplicationDetails";
@@ -30,9 +30,6 @@ import { AdminSetup } from "./features/auth/pages/AdminSetup";
 import { NotFound } from "./pages/NotFound";
 
 // ─── Page transition wrapper ──────────────────────────────────────────────────
-// Keying on pathname causes React to unmount/remount the subtree on navigation,
-// giving a clean fade-in without any animation library dependency.
-
 function AnimatedRoutes() {
   const location = useLocation();
   return (
@@ -43,15 +40,15 @@ function AnimatedRoutes() {
         <Route path={ROUTES.HOME} element={<Home />} />
 
         {/* ── Auth ── */}
-        <Route path={ROUTES.LOGIN}   element={<AdminLogin />} />
-        <Route path="/setup-admin"   element={<AdminSetup />} />
+        <Route path={ROUTES.LOGIN} element={<AdminLogin />} />
+        <Route path="/setup-admin" element={<AdminSetup />} />
 
         {/* ── User ── */}
-        <Route path={ROUTES.USER_DASHBOARD}   element={<UserDashboard />} />
+        <Route path={ROUTES.USER_DASHBOARD} element={<UserDashboard />} />
         <Route path={ROUTES.LOAN_APPLICATION} element={<LoanApplicationForm />} />
-        <Route path={ROUTES.PROCESSING_FEE}   element={<ProcessingFee />} />
+        <Route path={ROUTES.PROCESSING_FEE} element={<ProcessingFee />} />
 
-        {/* ── Admin (nested — AdminLayout renders once via Outlet) ── */}
+        {/* ── Admin (nested) ── */}
         <Route element={<AdminRoutes />}>
           <Route path={ROUTES.ADMIN_DASHBOARD}              element={<AdminDashboard />} />
           <Route path={ROUTES.ADMIN_LEADS}                  element={<LeadManagement />} />
@@ -72,7 +69,6 @@ function AnimatedRoutes() {
 }
 
 // ─── App ──────────────────────────────────────────────────────────────────────
-
 function App() {
   return (
     <Router>
