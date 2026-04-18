@@ -23,6 +23,8 @@ import {
 } from "../../../lib/controllers/admin.controller";
 import { formatCurrency } from "../../../utils/helpers";
 import { ROUTES } from "../../../utils/constants";
+import { RepaymentApprovals } from "./RepaymentApprovals";
+import { UsersPage } from "./UsersPage";
 
 // ─── Animation variants ───────────────────────────────────────────────────────
 const pageVariants = {
