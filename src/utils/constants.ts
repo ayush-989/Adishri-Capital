@@ -23,8 +23,13 @@ export const ROUTES = {
   PROCESSING_FEE: "/processing-fee",
   ADMIN_DASHBOARD: "/admin",
   ADMIN_LEADS: "/admin/leads",
+  ADMIN_APPLICATION: "/admin/application",
   ADMIN_REPAYMENTS: "/admin/repayments",
+  ADMIN_LOANS: "/admin/loans",
+  ADMIN_RECOVERY: "/admin/recovery",
+  ADMIN_USERS: "/admin/users",
+  ADMIN_USER_DETAIL: "/admin/users",  // append /:id at the route level
 } as const;
 
 export const PROCESSING_FEE_AMOUNT = 49;
-export const ADMIN_UPI_ID = "adishricapitals@ybl"; // Mock UPI ID
+export const ADMIN_UPI_ID = "adishricapitals@ybl";

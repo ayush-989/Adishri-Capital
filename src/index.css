@@ -7,13 +7,50 @@
   --color-primary-600: #2563eb;
   --color-primary-700: #1d4ed8;
   --color-primary-900: #1e3a8a;
-  
+
+  --color-sidebar: #222222;
+  --color-card-blue: #D6EDF6;
+  --color-card-green: #D2EEB5;
+  --color-card-orange: #FDDDA4;
+  --color-card-black: #303030;
+
   --font-sans: 'Inter', system-ui, sans-serif;
 }
 
 @layer base {
+
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
+
   body {
-    @apply text-slate-800 bg-slate-50 antialiased font-sans;
+    @apply text-slate-800 antialiased font-sans;
+    background-color: #F8FAFC;
+    margin: 0;
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  /* Premium custom scrollbar */
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 99px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: #94a3b8;
   }
 }
 
@@ -21,9 +58,4 @@
   .glass-card {
     @apply bg-white/70 backdrop-blur-md border border-white/20 shadow-xl;
   }
-}
-
-body {
-  margin: 0;
-  min-height: 100vh;
 }
