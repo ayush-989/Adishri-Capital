@@ -110,3 +110,16 @@ export const subscribeToApplicationsByStatus = (
     callback(snap.docs.map((d) => toApp(d.id, d.data())))
   );
 };
+/** Find application by Phone and PAN (used when user forgets ID) */
+export const findApplicationByPhoneAndPan = async (phone: string, pan: string): Promise<LoanApplication | null> => {
+  const snap = await getDocs(
+    query(
+      collection(db, COL), 
+      where("basicDetails.phone", "==", phone), 
+      where("kycDetails.panNumber", "==", pan.toUpperCase())
+    )
+  );
+  if (snap.empty) return null;
+  const d = snap.docs[0];
+  return toApp(d.id, d.data());
+};

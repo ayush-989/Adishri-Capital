@@ -1,64 +1,39 @@
 import { useState, useRef, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { AnimatePresence, motion } from "framer-motion";
 import { useAuth } from "../../../hooks/useAuth";
-import { cn } from "../ui/Button";
-import { APP_NAME, ROUTES } from "../../../utils/constants";
-import {
-  Landmark, Search, Bell, ChevronDown,
-  LogOut, LayoutDashboard, FileText,
-  User, Shield, Menu, X,
-} from "lucide-react";
+import { Landmark, MoreVertical, X, Settings, LogOut, LayoutDashboard, Search, FileText, Home } from "lucide-react";
+import { ROUTES } from "../../../utils/constants";
 
-// ─── Nav links config ─────────────────────────────────────────────────────────
-
-const PUBLIC_LINKS = [
-  { label: "Track Application", href: ROUTES.USER_DASHBOARD, icon: Search },
-  { label: "Apply for Loan",    href: ROUTES.LOAN_APPLICATION, icon: FileText },
-] as const;
-
-// ─── Helpers ──────────────────────────────────────────────────────────────────
-
-function isActive(href: string, pathname: string) {
-  return pathname === href;
-}
-
-// ─── Navbar ───────────────────────────────────────────────────────────────────
+const NAV_LINKS = [
+  { label: "Home", href: ROUTES.HOME, icon: Home },
+  { label: "Apply Now", href: ROUTES.LOAN_APPLICATION, icon: FileText },
+  { label: "Track Loan", href: ROUTES.USER_DASHBOARD, icon: Search },
+];
 
 export function Navbar() {
   const { user, logout } = useAuth();
   const { pathname } = useLocation();
-
-  const [searchOpen,   setSearchOpen]   = useState(false);
-  const [searchFocused, setSearchFocused] = useState(false);
-  const [dropdownOpen, setDropdownOpen] = useState(false);
-  const [mobileOpen,   setMobileOpen]   = useState(false);
-
+  const [menuOpen, setMenuOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
-  const searchRef   = useRef<HTMLInputElement>(null);
 
-  const initial = (user?.email?.[0] ?? "U").toUpperCase();
   const isAdmin = user?.role === "admin";
 
-  // Close dropdown on outside click
   useEffect(() => {
     const handler = (e: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node))
-        setDropdownOpen(false);
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
+        setMenuOpen(false);
+      }
     };
     document.addEventListener("mousedown", handler);
     return () => document.removeEventListener("mousedown", handler);
   }, []);
 
-  // Close mobile menu on route change
-  useEffect(() => { setMobileOpen(false); }, [pathname]);
-
-  // Focus search input when expanded
   useEffect(() => {
-    if (searchOpen) setTimeout(() => searchRef.current?.focus(), 80);
-  }, [searchOpen]);
+    setMenuOpen(false);
+  }, [pathname]);
 
   return (
+ feature/admin-dashboard
     <nav className="sticky top-0 z-40 w-full bg-white/80 backdrop-blur-xl border-b border-slate-200/60 shadow-sm shadow-slate-200/30">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-[64px]">
@@ -70,12 +45,23 @@ export function Navbar() {
           >
             <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-blue-500 to-violet-600 flex items-center justify-center shadow-lg shadow-blue-500/20 group-hover:shadow-blue-500/40 transition-shadow">
               <Landmark size={15} className="text-white" />
+
+    <nav className="sticky top-0 z-40 w-full bg-white border-b border-slate-200 shadow-sm backdrop-blur-md bg-white/90">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex justify-between items-center h-16">
+
+          {/* Logo */}
+          <Link to={ROUTES.HOME} className="flex items-center gap-2.5 shrink-0">
+            <div className="w-10 h-10 bg-[#102777] rounded-xl flex items-center justify-center shadow-md ring-4 ring-[#102777]/5 hover:scale-105 transition-transform duration-300">
+              <Landmark className="h-5 w-5 text-white" strokeWidth={2.5} />
+ main
             </div>
-            <span className="font-bold text-[15px] text-slate-900 tracking-tight hidden sm:block">
-              {APP_NAME}
+            <span className="font-black text-xl text-[#102777] tracking-tight">
+              Adishri <span className="text-[#E66325]">Capitals</span>
             </span>
           </Link>
 
+ feature/admin-dashboard
           {/* ── Desktop center nav ── */}
           <div className="hidden md:flex items-center gap-1.5">
             {PUBLIC_LINKS.map(({ label, href }) => (
@@ -118,10 +104,59 @@ export function Navbar() {
                       onBlur={() => { setSearchFocused(false); setSearchOpen(false); }}
                       className="flex-1 bg-transparent outline-none text-[13px] text-slate-700 placeholder:text-slate-400 font-medium min-w-0"
                     />
+
+          {/* 3 dots Menu (Visible Everywhere) */}
+          <div className="relative" ref={dropdownRef}>
+            <button
+              className={`p-2 rounded-xl transition-all duration-300 ${menuOpen ? 'bg-[#102777] text-white shadow-lg' : 'text-slate-600 hover:bg-[#102777]/5'}`}
+              onClick={() => setMenuOpen(!menuOpen)}
+              aria-label="Toggle menu"
+            >
+              {menuOpen ? <X size={22} /> : <MoreVertical size={24} />}
+            </button>
+
+            {/* Dropdown Menu */}
+            {menuOpen && (
+              <div className="absolute top-14 right-0 w-64 bg-white border border-slate-100 rounded-3xl shadow-[0_20px_50px_rgba(16,39,119,0.1)] p-3 z-50 animate-in fade-in zoom-in-95 duration-200 origin-top-right">
+                <div className="px-4 py-3 mb-2 border-b border-slate-50">
+                  <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Navigation</p>
+                </div>
+
+                <div className="space-y-1">
+                  {NAV_LINKS.map((link) => {
+                    const active = pathname === link.href;
+                    return (
+                      <Link
+                        key={link.href}
+                        to={link.href}
+                        className={`flex items-center gap-3 px-4 py-3 rounded-2xl text-sm font-bold transition-all ${active ? "bg-[#102777] text-white shadow-md shadow-[#102777]/20" : "text-slate-600 hover:bg-[#FBFBFB] hover:text-[#E66325]"
+                          }`}
+                      >
+                        <link.icon size={18} strokeWidth={active ? 2.5 : 2} />
+                        {link.label}
+                      </Link>
+                    );
+                  })}
+                </div>
+
+                {user && (
+                  <div className="mt-4 pt-4 border-t border-slate-50 space-y-1">
+                    <p className="px-4 mb-2 text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Account</p>
+                    {isAdmin && (
+                      <Link
+                        to={ROUTES.ADMIN_DASHBOARD}
+                        className="flex items-center gap-3 px-4 py-3 rounded-2xl text-sm font-bold text-slate-600 hover:bg-[#FBFBFB] hover:text-[#102777] transition-all"
+                      >
+                        <LayoutDashboard size={18} />
+                        Admin Panel
+                      </Link>
+                    )}
+ main
                     <button
-                      onMouseDown={(e) => { e.preventDefault(); setSearchOpen(false); }}
-                      className="text-slate-400 hover:text-slate-600 transition-colors shrink-0"
+                      onClick={logout}
+                      className="flex items-center gap-3 w-full px-4 py-3 rounded-2xl text-sm font-bold text-red-500 hover:bg-red-50 transition-all text-left"
                     >
+ feature/admin-dashboard
                       <X size={13} />
                     </button>
                   </motion.div>
@@ -253,94 +288,27 @@ export function Navbar() {
                 >
                   Apply Now
                 </Link>
+
+                      <LogOut size={18} />
+                      Logout
+                    </button>
+                  </div>
+                )}
+
+                <div className="mt-4 p-2">
+                  <Link
+                    to={ROUTES.LOAN_APPLICATION}
+                    className="flex items-center justify-center h-12 w-full bg-[#E66325] hover:bg-[#D4541B] text-white font-black rounded-2xl text-sm transition-all shadow-lg active:scale-95"
+                  >
+                    Quick Apply
+                  </Link>
+                </div>
+ main
               </div>
             )}
-
-            {/* ── Mobile hamburger ── */}
-            <button
-              onClick={() => setMobileOpen((v) => !v)}
-              className="md:hidden p-2 rounded-xl text-slate-500 hover:bg-slate-100 transition-colors ml-1"
-              aria-label="Toggle menu"
-            >
-              {mobileOpen ? <X size={18} /> : <Menu size={18} />}
-            </button>
           </div>
         </div>
       </div>
-
-      {/* ── Mobile menu ── */}
-      <AnimatePresence>
-        {mobileOpen && (
-          <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: "auto" }}
-            exit={{ opacity: 0, height: 0 }}
-            transition={{ duration: 0.2, ease: "easeOut" }}
-            className="md:hidden border-t border-slate-100 bg-white/95 backdrop-blur-xl overflow-hidden"
-          >
-            <div className="px-4 py-3 space-y-1">
-
-              {/* Mobile search */}
-              <div className="flex items-center gap-2 h-9 px-3 rounded-xl border border-slate-200 bg-slate-50 mb-3">
-                <Search size={13} className="text-slate-400 shrink-0" />
-                <input
-                  type="text"
-                  placeholder="Search loans, applications…"
-                  className="flex-1 bg-transparent outline-none text-[12px] text-slate-700 placeholder:text-slate-400"
-                />
-              </div>
-
-              {/* Nav links */}
-              {PUBLIC_LINKS.map(({ label, href, icon: Icon }) => (
-                <Link
-                  key={href}
-                  to={href}
-                  className={cn(
-                    "flex items-center gap-3 px-3 py-2.5 rounded-xl text-[13px] font-medium transition-colors",
-                    isActive(href, pathname)
-                      ? "bg-blue-50 text-blue-600"
-                      : "text-slate-600 hover:bg-slate-50"
-                  )}
-                >
-                  <Icon size={15} className="shrink-0" />
-                  {label}
-                </Link>
-              ))}
-
-              {/* Admin link */}
-              {isAdmin && (
-                <Link
-                  to={ROUTES.ADMIN_DASHBOARD}
-                  className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-[13px] font-medium text-slate-600 hover:bg-slate-50 transition-colors"
-                >
-                  <LayoutDashboard size={15} className="text-blue-500 shrink-0" />
-                  Admin Dashboard
-                </Link>
-              )}
-
-              <div className="h-px bg-slate-100 my-2" />
-
-              {/* Auth actions */}
-              {user ? (
-                <button
-                  onClick={() => { logout(); setMobileOpen(false); }}
-                  className="flex items-center gap-3 w-full px-3 py-2.5 rounded-xl text-[13px] font-medium text-rose-500 hover:bg-rose-50 transition-colors"
-                >
-                  <LogOut size={15} className="shrink-0" />
-                  Sign out
-                </button>
-              ) : (
-                <Link
-                  to={ROUTES.LOAN_APPLICATION}
-                  className="flex items-center justify-center gap-2 w-full px-4 py-2.5 rounded-xl text-[13px] font-semibold text-white bg-gradient-to-r from-blue-600 to-violet-600 shadow-sm"
-                >
-                  Apply Now
-                </Link>
-              )}
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
     </nav>
   );
 }

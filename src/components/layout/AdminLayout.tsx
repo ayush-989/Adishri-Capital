@@ -1,6 +1,6 @@
-import { ReactNode, useState } from "react";
+import { type ReactNode, useState } from "react";
 import { Sidebar } from "./Sidebar";
-import { Navigate, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../../firebase/config";
 import { useAuth } from "../../context/AuthContext";
@@ -39,18 +39,24 @@ export function AdminLayout({ children }: { children: ReactNode }) {
   // If not logged in OR logged in but not an admin, show the locked Admin Login screen
   if (!user || user.role !== "admin") {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-slate-50 py-12 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-md w-full space-y-8">
+      <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')]">
+        <div className="max-w-md w-full space-y-8 relative z-10">
           <div className="text-center">
             <div className="flex justify-center items-center gap-2 mb-6 cursor-pointer" onClick={() => navigate(ROUTES.HOME)}>
-              <Landmark className="h-10 w-10 text-blue-600" />
-              <span className="font-bold text-2xl text-slate-900">Adishri Capitals</span>
+              <div className="w-12 h-12 bg-gradient-to-br from-primary-600 to-primary-800 rounded-xl flex items-center justify-center shadow-lg shadow-primary-500/20">
+                <Landmark className="h-6 w-6 text-white" />
+              </div>
             </div>
-            <h2 className="mt-6 text-3xl font-extrabold text-slate-900">Admin Portal</h2>
-            <p className="mt-2 text-sm text-slate-600">Restricted Access</p>
+            <h2 className="mt-2 text-3xl font-bold tracking-tight text-gray-900">Admin Portal</h2>
+            <p className="mt-2 text-sm font-medium text-gray-500 uppercase tracking-widest">Restricted Access</p>
           </div>
+ feature/admin-dashboard
           <div className="mt-8 bg-white py-8 px-4 shadow-xl sm:rounded-xl sm:px-10 border border-slate-100">
             <form onSubmit={handleLogin} className="space-y-4">
+=======
+          <div className="mt-8 bg-white/80 backdrop-blur-xl py-8 px-6 shadow-2xl sm:rounded-3xl sm:px-10 border border-gray-100/50">
+             <form onSubmit={handleLogin} className="space-y-4">
+ main
               <Input
                 label="Administrator Email"
                 type="email"
@@ -79,6 +85,7 @@ export function AdminLayout({ children }: { children: ReactNode }) {
 
   // Permitted Admin Interface
   return (
+ feature/admin-dashboard
     <div className="flex min-h-screen bg-[#F8F9FA]">
       <Sidebar />
       <div className="flex-1 flex flex-col min-w-0">
@@ -107,6 +114,13 @@ export function AdminLayout({ children }: { children: ReactNode }) {
         </main>
       </div>
 
+
+    <div className="flex min-h-screen bg-gray-50/50">
+      <Sidebar />
+      <main className="flex-1 overflow-auto bg-gray-50/50">
+        {children}
+      </main>
+ main
     </div>
   );
 }

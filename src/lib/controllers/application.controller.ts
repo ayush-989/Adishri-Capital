@@ -1,5 +1,5 @@
 import { uploadFile } from "../firebase/storage";
-import { createApplication, getApplication } from "../services/application.service";
+import { createApplication, getApplication, findApplicationByPhoneAndPan } from "../services/application.service";
 import { createTransaction } from "../services/transaction.service";
 import { generateLoanId, generateTxnId } from "../../utils/helpers";
 import { LOAN_STATUS, PROCESSING_FEE_AMOUNT } from "../../utils/constants";
@@ -40,6 +40,9 @@ export const submitLoanApplication = async (
 export const trackApplication = (id: string) =>
   getApplication(id.trim().toUpperCase());
 
+export const trackByDetails = (phone: string, pan: string) =>
+  findApplicationByPhoneAndPan(phone.trim(), pan.trim().toUpperCase());
+
 export const submitProcessingFee = async (
   loanId: string,
   utr: string,
@@ -59,3 +62,25 @@ export const submitProcessingFee = async (
     createdAt: new Date().toISOString(),
   });
 };
+
+export const submitRepayment = async (
+  loanId: string,
+  amount: number,
+  utr: string,
+  screenshot: File
+): Promise<void> => {
+  const txnId = generateTxnId();
+  const screenshotUrl = await uploadFile(screenshot, `repayments/${loanId}/${txnId}`);
+
+  await createTransaction(txnId, {
+    txnId,
+    loanId,
+    amount,
+    utr,
+    screenshotUrl,
+    type: "repayment",
+    verified: false,
+    createdAt: new Date().toISOString(),
+  });
+};
+

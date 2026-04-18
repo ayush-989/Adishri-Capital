@@ -8,12 +8,15 @@
   --color-primary-700: #1d4ed8;
   --color-primary-900: #1e3a8a;
 
+ feature/admin-dashboard
   --color-sidebar: #222222;
   --color-card-blue: #D6EDF6;
   --color-card-green: #D2EEB5;
   --color-card-orange: #FDDDA4;
   --color-card-black: #303030;
 
+
+ main
   --font-sans: 'Inter', system-ui, sans-serif;
 }
 
@@ -58,4 +61,12 @@
   .glass-card {
     @apply bg-white/70 backdrop-blur-md border border-white/20 shadow-xl;
   }
+ feature/admin-dashboard
+
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+ main
 }
