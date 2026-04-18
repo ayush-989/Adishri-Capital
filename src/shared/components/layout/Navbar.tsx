@@ -5,8 +5,8 @@ import { Landmark, MoreVertical, X, Settings, LogOut, LayoutDashboard, Search, F
 import { ROUTES } from "../../../utils/constants";
 
 const NAV_LINKS = [
-  { label: "Home",       href: ROUTES.HOME, icon: Home },
-  { label: "Apply Now",  href: ROUTES.LOAN_APPLICATION, icon: FileText },
+  { label: "Home", href: ROUTES.HOME, icon: Home },
+  { label: "Apply Now", href: ROUTES.LOAN_APPLICATION, icon: FileText },
   { label: "Track Loan", href: ROUTES.USER_DASHBOARD, icon: Search },
 ];
 
@@ -39,18 +39,18 @@ export function Navbar() {
 
           {/* Logo */}
           <Link to={ROUTES.HOME} className="flex items-center gap-2.5 shrink-0">
-            <div className="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center shadow-lg shadow-blue-600/20 ring-4 ring-blue-50">
+            <div className="w-10 h-10 bg-[#102777] rounded-xl flex items-center justify-center shadow-md ring-4 ring-[#102777]/5 hover:scale-105 transition-transform duration-300">
               <Landmark className="h-5 w-5 text-white" strokeWidth={2.5} />
             </div>
-            <span className="font-black text-xl text-slate-900 tracking-tight">
-              Adishri <span className="text-blue-600">Capitals</span>
+            <span className="font-black text-xl text-[#102777] tracking-tight">
+              Adishri <span className="text-[#E66325]">Capitals</span>
             </span>
           </Link>
 
           {/* 3 dots Menu (Visible Everywhere) */}
           <div className="relative" ref={dropdownRef}>
             <button
-              className={`p-2 rounded-xl transition-all duration-300 ${menuOpen ? 'bg-slate-900 text-white shadow-lg' : 'text-slate-600 hover:bg-slate-100'}`}
+              className={`p-2 rounded-xl transition-all duration-300 ${menuOpen ? 'bg-[#102777] text-white shadow-lg' : 'text-slate-600 hover:bg-[#102777]/5'}`}
               onClick={() => setMenuOpen(!menuOpen)}
               aria-label="Toggle menu"
             >
@@ -59,11 +59,11 @@ export function Navbar() {
 
             {/* Dropdown Menu */}
             {menuOpen && (
-              <div className="absolute top-14 right-0 w-64 bg-white border border-slate-100 rounded-3xl shadow-[0_20px_50px_rgba(0,0,0,0.1)] p-3 z-50 animate-in fade-in zoom-in-95 duration-200 origin-top-right">
+              <div className="absolute top-14 right-0 w-64 bg-white border border-slate-100 rounded-3xl shadow-[0_20px_50px_rgba(16,39,119,0.1)] p-3 z-50 animate-in fade-in zoom-in-95 duration-200 origin-top-right">
                 <div className="px-4 py-3 mb-2 border-b border-slate-50">
                   <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Navigation</p>
                 </div>
-                
+
                 <div className="space-y-1">
                   {NAV_LINKS.map((link) => {
                     const active = pathname === link.href;
@@ -71,9 +71,8 @@ export function Navbar() {
                       <Link
                         key={link.href}
                         to={link.href}
-                        className={`flex items-center gap-3 px-4 py-3 rounded-2xl text-sm font-bold transition-all ${
-                          active ? "bg-blue-600 text-white shadow-lg shadow-blue-600/20" : "text-slate-600 hover:bg-slate-50 hover:text-blue-600"
-                        }`}
+                        className={`flex items-center gap-3 px-4 py-3 rounded-2xl text-sm font-bold transition-all ${active ? "bg-[#102777] text-white shadow-md shadow-[#102777]/20" : "text-slate-600 hover:bg-[#FBFBFB] hover:text-[#E66325]"
+                          }`}
                       >
                         <link.icon size={18} strokeWidth={active ? 2.5 : 2} />
                         {link.label}
@@ -88,7 +87,7 @@ export function Navbar() {
                     {isAdmin && (
                       <Link
                         to={ROUTES.ADMIN_DASHBOARD}
-                        className="flex items-center gap-3 px-4 py-3 rounded-2xl text-sm font-bold text-slate-600 hover:bg-slate-50 hover:text-blue-600 transition-all"
+                        className="flex items-center gap-3 px-4 py-3 rounded-2xl text-sm font-bold text-slate-600 hover:bg-[#FBFBFB] hover:text-[#102777] transition-all"
                       >
                         <LayoutDashboard size={18} />
                         Admin Panel
@@ -107,7 +106,7 @@ export function Navbar() {
                 <div className="mt-4 p-2">
                   <Link
                     to={ROUTES.LOAN_APPLICATION}
-                    className="flex items-center justify-center h-12 w-full bg-slate-900 hover:bg-blue-600 text-white font-black rounded-2xl text-sm transition-all shadow-lg active:scale-95"
+                    className="flex items-center justify-center h-12 w-full bg-[#E66325] hover:bg-[#D4541B] text-white font-black rounded-2xl text-sm transition-all shadow-lg active:scale-95"
                   >
                     Quick Apply
                   </Link>
