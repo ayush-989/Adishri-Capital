@@ -13,83 +13,91 @@ export interface StatCardProps {
   iconClass: string;
   valueClass?: string;
   index?: number;
-  href?: string;          // when set, card becomes a clickable link
+  href?: string;
 }
 
 export function StatCard({
   label, value, subtext, icon: Icon,
   trend = "neutral", trendLabel,
-  gradient, iconClass, valueClass = "text-slate-900",
+  gradient, iconClass, valueClass = "text-slate-800",
   index = 0, href,
 }: StatCardProps) {
   const TrendIcon =
-    trend === "up" ? TrendingUp :
+    trend === "up"   ? TrendingUp   :
     trend === "down" ? TrendingDown : Minus;
 
-  const trendColor =
-    trend === "up" ? "text-emerald-600" :
-    trend === "down" ? "text-rose-500" : "text-slate-400";
+  const trendBg =
+    trend === "up"   ? "bg-emerald-50 text-emerald-700" :
+    trend === "down" ? "bg-rose-50 text-rose-600"       :
+                       "bg-slate-100 text-slate-500";
 
   const inner = (
-    <div className="relative">
-      {/* Icon + trend */}
-      <div className="flex items-start justify-between mb-4">
-        <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${iconClass}`}>
-          <Icon size={18} />
+    <div className="relative z-10">
+      {/* Icon row */}
+      <div className="flex items-start justify-between mb-5">
+        <div className={`w-11 h-11 rounded-2xl flex items-center justify-center shadow-sm ${iconClass}`}>
+          <Icon size={20} strokeWidth={1.8} />
         </div>
         <div className="flex items-center gap-1.5">
           {trendLabel && (
-            <div className={`flex items-center gap-1 ${trendColor}`}>
-              <TrendIcon size={11} />
-              <span className="text-[10px] font-semibold">{trendLabel}</span>
-            </div>
+            <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold ${trendBg}`}>
+              <TrendIcon size={9} strokeWidth={2.5} />
+              {trendLabel}
+            </span>
           )}
-          {/* Arrow hint only when clickable */}
           {href && (
             <ArrowUpRight
               size={14}
-              className="text-slate-300 group-hover:text-slate-500 transition-colors"
+              className="text-slate-300 group-hover:text-blue-500 transition-colors duration-200"
             />
           )}
         </div>
       </div>
 
-      <p className="text-[10px] font-bold uppercase tracking-[0.13em] text-slate-400 mb-1">
+      {/* Label */}
+      <p className="text-[10px] font-bold uppercase tracking-[0.12em] text-slate-400 mb-1.5">
         {label}
       </p>
-      <p className={`text-[22px] font-bold leading-tight tracking-tight ${valueClass}`}>
+
+      {/* Value */}
+      <p className={`text-[26px] font-extrabold leading-none tracking-tight ${valueClass}`}>
         {value}
       </p>
-      <p className="text-[11px] text-slate-400 mt-1.5">{subtext}</p>
+
+      {/* Subtext */}
+      <p className="text-[11px] text-slate-400 mt-2.5 font-medium">{subtext}</p>
     </div>
   );
 
   const baseClass = `
-    group relative bg-gradient-to-br ${gradient}
-    rounded-2xl border border-slate-200/70 shadow-sm
-    hover:shadow-md transition-all duration-200 p-5 overflow-hidden
-    ${href ? "cursor-pointer hover:scale-[1.02] hover:border-slate-300/80" : "cursor-default"}
+    group relative bg-white overflow-hidden
+    rounded-2xl border border-slate-200/70
+    shadow-[0_1px_3px_rgba(0,0,0,0.06),0_1px_2px_rgba(0,0,0,0.04)]
+    hover:shadow-[0_8px_24px_rgba(0,0,0,0.10)] hover:-translate-y-1 hover:border-slate-300/60
+    active:scale-[0.99]
+    transition-all duration-250 p-6
+    ${href ? "cursor-pointer" : "cursor-default"}
   `;
 
-  const decorOrb = (
-    <div className="absolute -top-8 -right-8 w-24 h-24 rounded-full bg-white/50 blur-2xl pointer-events-none" />
+  // Accent top-border stripe using the gradient prop
+  const accentBar = (
+    <div className={`absolute inset-x-0 top-0 h-[3px] bg-gradient-to-r ${gradient}`} />
   );
 
   return (
     <motion.div
       initial={{ opacity: 0, y: 16 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.35, delay: index * 0.06, ease: "easeOut" }}
-      whileHover={{ y: href ? -3 : -2, transition: { duration: 0.15 } }}
+      transition={{ duration: 0.4, delay: index * 0.055, ease: [0.25, 0.46, 0.45, 0.94] }}
     >
       {href ? (
         <Link to={href} className={baseClass}>
-          {decorOrb}
+          {accentBar}
           {inner}
         </Link>
       ) : (
         <div className={baseClass}>
-          {decorOrb}
+          {accentBar}
           {inner}
         </div>
       )}

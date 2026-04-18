@@ -28,26 +28,23 @@ const NAV_SECTIONS = [
   {
     label: "Main",
     items: [
-      { label: "Dashboard",    href: ROUTES.ADMIN_DASHBOARD,  icon: LayoutDashboard, end: true  },
+      { label: "Dashboard", href: ROUTES.ADMIN_DASHBOARD, icon: LayoutDashboard, end: true },
     ],
   },
   {
     label: "Management",
     items: [
-      { label: "Applications", href: ROUTES.ADMIN_LEADS,      icon: Users,           end: false },
-      { label: "Users",        href: ROUTES.ADMIN_USERS,      icon: UserCircle,      end: false },
+      { label: "Applications", href: ROUTES.ADMIN_LEADS, icon: Users, end: false },
+      { label: "Users", href: ROUTES.ADMIN_USERS, icon: UserCircle, end: false },
     ],
   },
   {
     label: "Finance",
     items: [
-      { label: "Repayments",   href: ROUTES.ADMIN_REPAYMENTS, icon: CreditCard,      end: false },
+      { label: "Repayments", href: ROUTES.ADMIN_REPAYMENTS, icon: CreditCard, end: false },
     ],
   },
 ] as const;
-
-// Flat list kept for breadcrumb logic
-const NAV_ITEMS = NAV_SECTIONS.flatMap((s) => s.items);
 
 // ─── Breadcrumb ───────────────────────────────────────────────────────────────
 
@@ -96,8 +93,8 @@ class AdminErrorBoundary extends Component<{ children: ReactNode }, EBState> {
   render() {
     if (!this.state.hasError) return this.props.children;
     return (
-      <div className="flex flex-col items-center justify-center min-h-screen bg-slate-50 gap-5 p-8 text-center">
-        <div className="w-16 h-16 rounded-2xl bg-rose-50 border border-rose-100 flex items-center justify-center">
+      <div className="flex flex-col items-center justify-center min-h-screen bg-slate-100 gap-5 p-8 text-center">
+        <div className="w-16 h-16 rounded-2xl bg-rose-50 border border-rose-200 flex items-center justify-center">
           <AlertTriangle className="text-rose-500" size={26} />
         </div>
         <div>
@@ -122,16 +119,14 @@ function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
   const initial = (user?.email?.[0] ?? "A").toUpperCase();
 
   return (
-    <div className="flex flex-col h-full bg-white border-r border-slate-200 select-none">
-
-      {/* Brand */}
-      <div className="px-5 pt-6 pb-5 border-b border-slate-100">
+    <div className="flex flex-col h-full bg-gradient-to-b from-[#0F172A] via-[#111827] to-[#0F172A] select-none">
+      <div className="px-5 pt-6 pb-5 border-b border-white/5">
         <div className="flex items-center gap-3">
-          <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-blue-500 to-violet-600 flex items-center justify-center shadow-md shadow-blue-500/20 shrink-0">
+          <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center shadow-lg shadow-blue-500/40 shrink-0">
             <Landmark size={16} className="text-white" />
           </div>
           <div className="min-w-0">
-            <p className="text-[13px] font-bold text-slate-900 truncate tracking-tight">{APP_NAME}</p>
+            <p className="text-[13px] font-bold text-white truncate tracking-tight">{APP_NAME}</p>
             <div className="flex items-center gap-1.5 mt-0.5">
               <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
               <p className="text-[9px] font-semibold text-slate-400 uppercase tracking-[0.15em]">Live</p>
@@ -140,11 +135,10 @@ function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
         </div>
       </div>
 
-      {/* Sectioned nav */}
-      <nav className="flex-1 overflow-y-auto px-3 py-4 space-y-5">
+      <nav className="flex-1 overflow-y-auto px-3 py-5 space-y-6">
         {NAV_SECTIONS.map((section) => (
           <div key={section.label}>
-            <p className="px-2 pb-1.5 text-[9px] font-bold text-slate-400 uppercase tracking-[0.18em]">
+            <p className="px-3 pb-2 text-[9px] font-bold text-slate-500 uppercase tracking-[0.2em]">
               {section.label}
             </p>
             <div className="space-y-0.5">
@@ -156,31 +150,31 @@ function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
         ))}
       </nav>
 
-      <div className="mx-4 h-px bg-slate-100" />
+      <div className="mx-4 h-px bg-white/5" />
 
       {/* User + logout */}
-      <div className="p-3 space-y-1">
-        <div className="flex items-center gap-3 px-3 py-2.5 rounded-xl bg-slate-50 border border-slate-200">
-          <div className="w-7 h-7 rounded-full bg-gradient-to-br from-blue-500 to-violet-600 flex items-center justify-center text-white text-[11px] font-bold shrink-0">
+      <div className="p-3 space-y-1 pb-5">
+        <div className="flex items-center gap-3 px-3 py-3 rounded-xl bg-white/5 border border-white/8 hover:bg-white/8 transition-colors">
+          <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-white text-[11px] font-bold shrink-0 shadow-md shadow-blue-500/30">
             {initial}
           </div>
           <div className="min-w-0 flex-1">
-            <p className="text-[11px] font-semibold text-slate-700 truncate leading-tight">
+            <p className="text-[11px] font-semibold text-slate-200 truncate leading-tight">
               {user?.email ?? "Administrator"}
             </p>
             <div className="flex items-center gap-1 mt-0.5">
-              <Shield size={8} className="text-blue-500" />
-              <p className="text-[9px] font-bold text-blue-500 uppercase tracking-wider">Super Admin</p>
+              <Shield size={8} className="text-blue-400" />
+              <p className="text-[9px] font-bold text-blue-400 uppercase tracking-wider">Super Admin</p>
             </div>
           </div>
-          <Settings size={12} className="text-slate-400 shrink-0" />
+          <Settings size={12} className="text-slate-500 shrink-0" />
         </div>
 
         <button
           onClick={logout}
-          className="group flex items-center gap-3 w-full px-3.5 py-2.5 rounded-xl text-[12px] font-medium text-slate-500 hover:bg-rose-50 hover:text-rose-500 transition-all duration-150"
+          className="group flex items-center gap-3 w-full px-3.5 py-2.5 rounded-xl text-[12px] font-medium text-slate-500 hover:bg-rose-500/10 hover:text-rose-400 transition-all duration-150"
         >
-          <LogOut size={14} className="shrink-0 group-hover:text-rose-500 transition-colors" />
+          <LogOut size={14} className="shrink-0 group-hover:text-rose-400 transition-colors" />
           Sign out
         </button>
       </div>
@@ -188,22 +182,22 @@ function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
   );
 }
 
-// ─── Notification icon map ────────────────────────────────────────────────────
+// ─── Notification helpers ─────────────────────────────────────────────────────
 
 const NOTIF_ICON: Record<Notification["type"], { icon: React.ElementType; color: string; bg: string }> = {
-  info:    { icon: Info,          color: "text-blue-500",   bg: "bg-blue-50"   },
-  success: { icon: CheckCircle2,  color: "text-emerald-500",bg: "bg-emerald-50"},
-  warning: { icon: AlertCircle,   color: "text-amber-500",  bg: "bg-amber-50"  },
-  error:   { icon: XCircle,       color: "text-rose-500",   bg: "bg-rose-50"   },
+  info: { icon: Info, color: "text-blue-500", bg: "bg-blue-50" },
+  success: { icon: CheckCircle2, color: "text-emerald-500", bg: "bg-emerald-50" },
+  warning: { icon: AlertCircle, color: "text-amber-500", bg: "bg-amber-50" },
+  error: { icon: XCircle, color: "text-rose-500", bg: "bg-rose-50" },
 };
 
 function timeAgo(iso: string): string {
   const diff = Date.now() - new Date(iso).getTime();
-  const mins  = Math.floor(diff / 60000);
+  const mins = Math.floor(diff / 60000);
   const hours = Math.floor(diff / 3600000);
-  const days  = Math.floor(diff / 86400000);
-  if (mins  < 1)  return "just now";
-  if (mins  < 60) return `${mins}m ago`;
+  const days = Math.floor(diff / 86400000);
+  if (mins < 1) return "just now";
+  if (mins < 60) return `${mins}m ago`;
   if (hours < 24) return `${hours}h ago`;
   return `${days}d ago`;
 }
@@ -211,11 +205,7 @@ function timeAgo(iso: string): string {
 // ─── Notification dropdown ────────────────────────────────────────────────────
 
 function NotificationDropdown({
-  notifications,
-  unreadCount,
-  onMarkAsRead,
-  onMarkAllAsRead,
-  onClose,
+  notifications, unreadCount, onMarkAsRead, onMarkAllAsRead, onClose,
 }: {
   notifications: Notification[];
   unreadCount: number;
@@ -231,10 +221,10 @@ function NotificationDropdown({
       animate={{ opacity: 1, y: 0, scale: 1 }}
       exit={{ opacity: 0, y: -6, scale: 0.97 }}
       transition={{ duration: 0.15, ease: "easeOut" }}
-      className="absolute right-0 top-[calc(100%+6px)] w-80 bg-white rounded-2xl shadow-xl shadow-slate-200/60 border border-slate-100 overflow-hidden z-50"
+      className="absolute right-0 top-[calc(100%+6px)] w-80 bg-white rounded-2xl shadow-xl border border-slate-100 overflow-hidden z-50"
     >
       {/* Header */}
-      <div className="flex items-center justify-between px-4 py-3 border-b border-slate-100 bg-gradient-to-br from-slate-50 to-blue-50/30">
+      <div className="flex items-center justify-between px-4 py-3 border-b border-slate-100 bg-slate-50">
         <div className="flex items-center gap-2">
           <p className="text-[13px] font-bold text-slate-800">Notifications</p>
           {unreadCount > 0 && (
@@ -274,12 +264,9 @@ function NotificationDropdown({
                   !n.read && "bg-blue-50/40"
                 )}
               >
-                {/* Type icon */}
                 <div className={`w-7 h-7 rounded-full ${cfg.bg} flex items-center justify-center shrink-0 mt-0.5`}>
                   <Icon size={13} className={cfg.color} />
                 </div>
-
-                {/* Content */}
                 <div className="flex-1 min-w-0">
                   <div className="flex items-start justify-between gap-2">
                     <p className={cn(
@@ -296,8 +283,6 @@ function NotificationDropdown({
                     {n.message}
                   </p>
                 </div>
-
-                {/* Unread dot */}
                 {!n.read && (
                   <span className="w-1.5 h-1.5 rounded-full bg-blue-500 shrink-0 mt-1.5" />
                 )}
@@ -309,7 +294,7 @@ function NotificationDropdown({
 
       {/* Footer */}
       {notifications.length > 5 && (
-        <div className="px-4 py-2.5 border-t border-slate-100 bg-slate-50/60 text-center">
+        <div className="px-4 py-2.5 border-t border-slate-100 bg-slate-50 text-center">
           <p className="text-[11px] text-slate-400">
             Showing 5 of {notifications.length} notifications
           </p>
@@ -327,17 +312,16 @@ function AdminNavbar({ onMenuClick }: { onMenuClick: () => void }) {
   const { searchTerm, setSearchTerm, clearSearch } = useSearch();
   const { notifications, unreadCount, markAsRead, markAllAsRead } = useNotifications();
 
-  const [profileOpen, setProfileOpen]   = useState(false);
-  const [bellOpen,    setBellOpen]      = useState(false);
+  const [profileOpen, setProfileOpen] = useState(false);
+  const [bellOpen, setBellOpen] = useState(false);
   const [searchFocused, setSearchFocused] = useState(false);
 
   const profileRef = useRef<HTMLDivElement>(null);
-  const bellRef    = useRef<HTMLDivElement>(null);
+  const bellRef = useRef<HTMLDivElement>(null);
 
-  const crumbs  = buildBreadcrumbs(pathname);
+  const crumbs = buildBreadcrumbs(pathname);
   const initial = (user?.email?.[0] ?? "A").toUpperCase();
 
-  // Close dropdowns on outside click
   useEffect(() => {
     const handler = (e: MouseEvent) => {
       if (profileRef.current && !profileRef.current.contains(e.target as Node))
@@ -349,7 +333,6 @@ function AdminNavbar({ onMenuClick }: { onMenuClick: () => void }) {
     return () => document.removeEventListener("mousedown", handler);
   }, []);
 
-  // Clear search when navigating away from Applications page
   useEffect(() => {
     if (pathname !== ROUTES.ADMIN_LEADS) clearSearch();
   }, [pathname, clearSearch]);
@@ -357,7 +340,7 @@ function AdminNavbar({ onMenuClick }: { onMenuClick: () => void }) {
   const isOnLeads = pathname === ROUTES.ADMIN_LEADS;
 
   return (
-    <header className="h-[60px] shrink-0 sticky top-0 z-30 flex items-center justify-between px-5 sm:px-6 bg-white/80 backdrop-blur-xl border-b border-slate-200/60 shadow-[0_1px_0_rgba(0,0,0,0.04)]">
+    <header className="h-[64px] shrink-0 sticky top-0 z-30 flex items-center justify-between px-5 sm:px-6 bg-white/95 backdrop-blur-xl border-b border-slate-200/80 shadow-[0_1px_8px_rgba(0,0,0,0.06)]">
 
       {/* Left — hamburger + breadcrumb */}
       <div className="flex items-center gap-3 min-w-0">
@@ -390,40 +373,6 @@ function AdminNavbar({ onMenuClick }: { onMenuClick: () => void }) {
         </nav>
       </div>
 
-      {/* Center — search (functional on Applications page, decorative elsewhere) */}
-      <motion.div
-        animate={{ width: searchFocused ? 256 : 192 }}
-        transition={{ duration: 0.2, ease: "easeOut" }}
-        className={cn(
-          "hidden md:flex items-center gap-2 h-8 px-3 rounded-xl border text-[12px] transition-colors duration-150",
-          searchFocused
-            ? "border-blue-300 bg-white shadow-sm shadow-blue-100/60"
-            : "border-slate-200 bg-slate-50"
-        )}
-      >
-        <Search size={13} className={searchFocused ? "text-blue-400" : "text-slate-400"} />
-        <input
-          type="text"
-          value={isOnLeads ? searchTerm : ""}
-          onChange={(e) => isOnLeads && setSearchTerm(e.target.value)}
-          placeholder={isOnLeads ? "Search applications…" : "Search anything…"}
-          onFocus={() => setSearchFocused(true)}
-          onBlur={() => setSearchFocused(false)}
-          className="flex-1 bg-transparent outline-none text-slate-700 placeholder:text-slate-400 text-[12px] min-w-0"
-        />
-        {/* Show clear button when there's a search term, otherwise show ⌘K hint */}
-        {isOnLeads && searchTerm ? (
-          <button
-            onMouseDown={(e) => { e.preventDefault(); clearSearch(); }}
-            className="text-slate-400 hover:text-slate-600 transition-colors shrink-0"
-          >
-            <X size={12} />
-          </button>
-        ) : !searchFocused ? (
-          <kbd className="text-[10px] text-slate-400 bg-slate-200 px-1.5 py-0.5 rounded font-mono shrink-0">⌘K</kbd>
-        ) : null}
-      </motion.div>
-
       {/* Right — bell + profile */}
       <div className="flex items-center gap-1 shrink-0">
 
@@ -433,13 +382,15 @@ function AdminNavbar({ onMenuClick }: { onMenuClick: () => void }) {
             aria-label="Notifications"
             onClick={() => { setBellOpen((v) => !v); setProfileOpen(false); }}
             className={cn(
-              "relative p-2 rounded-lg transition-colors",
-              bellOpen ? "bg-slate-100 text-slate-700" : "text-slate-500 hover:bg-slate-100"
+              "relative p-2.5 rounded-xl transition-all duration-150",
+              bellOpen
+                ? "bg-blue-50 text-blue-600 shadow-sm"
+                : "text-slate-500 hover:bg-slate-100 hover:text-slate-700"
             )}
           >
-            <Bell size={17} />
+            <Bell size={18} />
             {unreadCount > 0 && (
-              <span className="absolute top-1 right-1 min-w-[16px] h-4 rounded-full bg-rose-500 border-2 border-white flex items-center justify-center">
+              <span className="absolute top-1.5 right-1.5 min-w-[16px] h-4 rounded-full bg-gradient-to-br from-rose-500 to-red-600 border-2 border-white flex items-center justify-center shadow-sm">
                 <span className="text-[9px] font-bold text-white px-0.5">
                   {unreadCount > 9 ? "9+" : unreadCount}
                 </span>
@@ -466,9 +417,9 @@ function AdminNavbar({ onMenuClick }: { onMenuClick: () => void }) {
         <div className="relative" ref={profileRef}>
           <button
             onClick={() => { setProfileOpen((v) => !v); setBellOpen(false); }}
-            className="flex items-center gap-2 pl-1 pr-2.5 py-1 rounded-xl hover:bg-slate-100 transition-colors"
+            className="flex items-center gap-2.5 pl-1.5 pr-3 py-1.5 rounded-xl hover:bg-slate-100 transition-all duration-150"
           >
-            <div className="w-7 h-7 rounded-full bg-gradient-to-br from-blue-500 to-violet-600 flex items-center justify-center text-white text-[11px] font-bold shrink-0">
+            <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-white text-[11px] font-bold shrink-0 shadow-md shadow-blue-500/25">
               {initial}
             </div>
             <div className="hidden sm:flex flex-col items-start leading-none">
@@ -495,9 +446,9 @@ function AdminNavbar({ onMenuClick }: { onMenuClick: () => void }) {
                 animate={{ opacity: 1, y: 0, scale: 1 }}
                 exit={{ opacity: 0, y: -6, scale: 0.97 }}
                 transition={{ duration: 0.15, ease: "easeOut" }}
-                className="absolute right-0 top-[calc(100%+6px)] w-56 bg-white rounded-2xl shadow-xl shadow-slate-200/60 border border-slate-100 overflow-hidden z-50"
+                className="absolute right-0 top-[calc(100%+6px)] w-56 bg-white rounded-2xl shadow-xl border border-slate-100 overflow-hidden z-50"
               >
-                <div className="px-4 py-3 bg-gradient-to-br from-slate-50 to-blue-50/40 border-b border-slate-100">
+                <div className="px-4 py-3 bg-slate-50 border-b border-slate-100">
                   <p className="text-[12px] font-bold text-slate-800 truncate">{user?.email ?? "Administrator"}</p>
                   <div className="flex items-center gap-1.5 mt-1">
                     <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
@@ -517,6 +468,7 @@ function AdminNavbar({ onMenuClick }: { onMenuClick: () => void }) {
             )}
           </AnimatePresence>
         </div>
+
       </div>
     </header>
   );
@@ -531,12 +483,11 @@ export function AdminLayout({ children }: AdminLayoutProps) {
 
   return (
     <AdminErrorBoundary>
-      {/* SearchProvider wraps the entire layout so both Navbar and pages share the same search state */}
       <SearchProvider>
-        <div className="flex h-screen overflow-hidden bg-[#f8fafc]">
+        <div className="flex h-screen overflow-hidden bg-[#F1F5F9]">
 
           {/* Desktop sidebar */}
-          <aside className="hidden lg:flex lg:flex-col w-[220px] shrink-0 shadow-[1px_0_0_rgba(0,0,0,0.06)]">
+          <aside className="hidden lg:flex lg:flex-col w-[230px] shrink-0 shadow-[2px_0_20px_rgba(0,0,0,0.15)]">
             <SidebarContent />
           </aside>
 
@@ -570,7 +521,7 @@ export function AdminLayout({ children }: AdminLayoutProps) {
                 <button
                   onClick={() => setDrawerOpen(false)}
                   aria-label="Close sidebar"
-                  className="absolute top-4 right-3 z-10 p-1.5 rounded-lg text-slate-400 hover:bg-slate-100 transition-colors"
+                  className="absolute top-4 right-3 z-10 p-1.5 rounded-lg text-slate-400 hover:bg-slate-800 transition-colors"
                 >
                   <X size={14} />
                 </button>
@@ -582,7 +533,7 @@ export function AdminLayout({ children }: AdminLayoutProps) {
           {/* Main column */}
           <div className="flex flex-col flex-1 min-w-0 overflow-hidden">
             <AdminNavbar onMenuClick={() => setDrawerOpen(true)} />
-            <main className="flex-1 overflow-y-auto">
+            <main className="flex-1 overflow-y-auto bg-[#F1F5F9]">
               {children ?? <Outlet />}
             </main>
           </div>

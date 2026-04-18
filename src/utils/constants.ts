@@ -32,4 +32,4 @@ export const ROUTES = {
 } as const;
 
 export const PROCESSING_FEE_AMOUNT = 49;
-export const ADMIN_UPI_ID = "adishricapitals@ybl"; // Mock UPI ID
+export const ADMIN_UPI_ID = "adishricapitals@ybl";

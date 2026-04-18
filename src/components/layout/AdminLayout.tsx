@@ -8,11 +8,11 @@ import { ROUTES } from "../../utils/constants";
 import { Input } from "../ui/Input";
 import { Button } from "../ui/Button";
 import { toast } from "react-toastify";
-import { Landmark } from "lucide-react";
+import { Landmark, Search, Bell } from "lucide-react";
 
 export function AdminLayout({ children }: { children: ReactNode }) {
   const { user, loading, refreshUser } = useAuth();
-  
+
   // Login State
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -50,7 +50,7 @@ export function AdminLayout({ children }: { children: ReactNode }) {
             <p className="mt-2 text-sm text-slate-600">Restricted Access</p>
           </div>
           <div className="mt-8 bg-white py-8 px-4 shadow-xl sm:rounded-xl sm:px-10 border border-slate-100">
-             <form onSubmit={handleLogin} className="space-y-4">
+            <form onSubmit={handleLogin} className="space-y-4">
               <Input
                 label="Administrator Email"
                 type="email"
@@ -79,11 +79,34 @@ export function AdminLayout({ children }: { children: ReactNode }) {
 
   // Permitted Admin Interface
   return (
-    <div className="flex min-h-screen bg-slate-50">
+    <div className="flex min-h-screen bg-[#F8F9FA]">
       <Sidebar />
-      <main className="flex-1 overflow-auto bg-slate-50">
-        {children}
-      </main>
+      <div className="flex-1 flex flex-col min-w-0">
+        <header className="h-24 flex items-center justify-between px-10 gap-6 sticky top-0 bg-[#F8F9FA] z-10">
+          <div>
+            {/* The page title goes here, we'll let individual pages render it for flexibility, or we can add it here.
+                We'll place it here to match typical layout behavior, but Hosty has it in the page.
+                Let's just provide the top right items. */}
+          </div>
+          <div className="flex items-center gap-4">
+            <button className="w-10 h-10 flex items-center justify-center text-slate-500 hover:bg-white hover:text-slate-900 rounded-full transition-all shadow-sm bg-white border border-slate-100 relative">
+              <Bell size={18} />
+              <span className="absolute top-2.5 right-2.5 w-2 h-2 bg-slate-900 rounded-full border border-white"></span>
+            </button>
+            <div className="ml-2 w-10 h-10 rounded-full overflow-hidden border border-slate-200">
+              <img 
+                src="https://api.dicebear.com/7.x/avataaars/svg?seed=Felix" 
+                alt="Profile" 
+                className="w-full h-full object-cover"
+              />
+            </div>
+          </div>
+        </header>
+        <main className="flex-1 overflow-auto bg-[#F8F9FA]">
+          {children}
+        </main>
+      </div>
+
     </div>
   );
 }

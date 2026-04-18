@@ -48,11 +48,11 @@ function SummaryCard({ icon, label, value, color, bg }: {
   icon: React.ReactNode; label: string; value: string; color: string; bg: string;
 }) {
   return (
-    <div className={`${bg} rounded-2xl border border-slate-200/60 shadow-sm px-5 py-4 flex items-center gap-4`}>
+    <div className={`${bg} rounded-2xl border border-slate-200 shadow-sm px-5 py-4 flex items-center gap-4`}>
       <div className={`p-2.5 rounded-xl bg-white/60 ${color}`}>{icon}</div>
       <div>
-        <p className="text-[10px] font-bold uppercase tracking-[0.12em] text-slate-400">{label}</p>
-        <p className="text-xl font-black text-slate-900 tabular-nums mt-0.5">{value}</p>
+        <p className="text-xs font-bold uppercase tracking-wider text-slate-500">{label}</p>
+        <p className="text-xl font-bold text-slate-800 mt-0.5">{value}</p>
       </div>
     </div>
   );
@@ -94,106 +94,106 @@ export function LoansPage() {
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3 }}
-      className="p-6 sm:p-8 space-y-5 max-w-[1400px] mx-auto"
+      className="p-6 sm:p-8 space-y-6 max-w-7xl mx-auto"
     >
-      {/* ── Header ── */}
-      <div className="flex items-center gap-3">
-        <button
-          onClick={() => navigate(ROUTES.ADMIN_DASHBOARD)}
-          className="p-2 rounded-xl text-slate-500 hover:bg-slate-100 transition-colors"
-        >
-          <ArrowLeft size={18} />
-        </button>
-        <div>
-          <div className="flex items-center gap-2 text-xs text-slate-400 mb-0.5">
-            <span
-              className="hover:text-blue-500 cursor-pointer transition-colors"
-              onClick={() => navigate(ROUTES.ADMIN_DASHBOARD)}
-            >
-              Dashboard
-            </span>
-            <span>/</span>
-            <span className="text-slate-700 font-medium">Loans</span>
-          </div>
-          <h1 className="text-xl font-semibold text-slate-900 tracking-tight">All Loans</h1>
-        </div>
-      </div>
+       {/* ── Header ── */}
+       <div className="flex items-center gap-3">
+         <button
+           onClick={() => navigate(ROUTES.ADMIN_DASHBOARD)}
+           className="p-2 rounded-xl text-slate-500 hover:bg-slate-100 transition-colors"
+         >
+           <ArrowLeft size={18} />
+         </button>
+         <div>
+           <div className="flex items-center gap-2 text-xs text-slate-500 mb-0.5">
+             <span
+               className="hover:text-blue-600 cursor-pointer transition-colors"
+               onClick={() => navigate(ROUTES.ADMIN_DASHBOARD)}
+             >
+               Dashboard
+             </span>
+             <span>/</span>
+             <span className="text-slate-700 font-medium">Loans</span>
+           </div>
+           <h1 className="text-2xl font-bold text-slate-800 tracking-tight">All Loans</h1>
+         </div>
+       </div>
 
-      {/* ── Summary cards ── */}
-      {!loading && !error && (
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          <SummaryCard
-            icon={<Activity size={16} />}
-            label="Total Loans"
-            value={loans.length.toLocaleString("en-IN")}
-            color="text-blue-600"
-            bg="bg-gradient-to-br from-blue-50 to-indigo-50/50"
-          />
-          <SummaryCard
-            icon={<Banknote size={16} />}
-            label="Active Exposure"
-            value={formatCurrency(totalExposure)}
-            color="text-teal-600"
-            bg="bg-gradient-to-br from-teal-50 to-cyan-50/50"
-          />
-          <SummaryCard
-            icon={<TrendingDown size={16} />}
-            label="Pending Recovery"
-            value={formatCurrency(totalRemaining)}
-            color="text-rose-600"
-            bg="bg-gradient-to-br from-rose-50 to-pink-50/50"
-          />
-        </div>
-      )}
+       {/* ── Summary cards ── */}
+       {!loading && !error && (
+         <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+           <SummaryCard
+             icon={<Activity size={18} />}
+             label="Total Loans"
+             value={loans.length.toLocaleString("en-IN")}
+             color="text-blue-600"
+             bg="bg-gradient-to-br from-blue-50 to-indigo-50/50"
+           />
+           <SummaryCard
+             icon={<Banknote size={18} />}
+             label="Active Exposure"
+             value={formatCurrency(totalExposure)}
+             color="text-teal-600"
+             bg="bg-gradient-to-br from-teal-50 to-cyan-50/50"
+           />
+           <SummaryCard
+             icon={<TrendingDown size={18} />}
+             label="Pending Recovery"
+             value={formatCurrency(totalRemaining)}
+             color="text-rose-600"
+             bg="bg-gradient-to-br from-rose-50 to-pink-50/50"
+           />
+         </div>
+       )}
 
-      {/* ── Table card ── */}
-      <div className="bg-white rounded-2xl border border-slate-200/60 shadow-sm overflow-hidden">
+       {/* ── Table card ── */}
+       <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
 
-        {/* Toolbar */}
-        <div className="flex items-center justify-between px-5 py-4 border-b border-slate-100">
-          <p className="text-[13px] font-bold text-slate-800">
-            Loan Portfolio
-            {!loading && (
-              <span className="ml-2 text-[11px] font-normal text-slate-400">
-                {filtered.length} of {loans.length}
-              </span>
-            )}
-          </p>
-          <div className="relative">
-            <SlidersHorizontal size={13} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" />
-            <select
-              value={filter}
-              onChange={(e) => setFilter(e.target.value as LoanStatus | "all")}
-              className="h-8 pl-8 pr-7 rounded-xl border border-slate-200 bg-slate-50 text-[12px] text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500/30 appearance-none cursor-pointer"
-            >
-              {FILTER_OPTIONS.map((o) => (
-                <option key={o.value} value={o.value}>{o.label}</option>
-              ))}
-            </select>
-          </div>
-        </div>
+         {/* Toolbar */}
+         <div className="flex items-center justify-between px-6 py-4 border-b border-slate-200">
+           <p className="text-sm font-semibold text-slate-800">
+             Loan Portfolio
+             {!loading && (
+               <span className="ml-2 text-xs font-normal text-slate-500">
+                 {filtered.length} of {loans.length}
+               </span>
+             )}
+           </p>
+           <div className="relative">
+             <SlidersHorizontal size={13} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" />
+             <select
+               value={filter}
+               onChange={(e) => setFilter(e.target.value as LoanStatus | "all")}
+               className="h-9 pl-8 pr-7 rounded-xl border border-slate-200 bg-slate-50 text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-300 appearance-none cursor-pointer transition-all"
+             >
+               {FILTER_OPTIONS.map((o) => (
+                 <option key={o.value} value={o.value}>{o.label}</option>
+               ))}
+             </select>
+           </div>
+         </div>
 
-        {/* Error */}
-        {error && (
-          <div className="flex items-center gap-2 px-5 py-4 text-sm text-red-600 bg-red-50 border-b border-red-100">
-            <AlertCircle size={15} />
-            {error}
-          </div>
-        )}
+         {/* Error */}
+         {error && (
+           <div className="flex items-center gap-2 px-6 py-4 text-sm text-red-600 bg-red-50 border-b border-red-200">
+             <AlertCircle size={16} />
+             {error}
+           </div>
+         )}
 
-        {/* Table */}
-        <div className="overflow-x-auto">
-          <table className="w-full text-sm text-left">
-            <thead>
-              <tr className="bg-slate-50/80 border-b border-slate-100">
-                {["Loan ID", "User ID", "Total Amount", "Remaining Balance", "Interest Rate", "Status"].map((h) => (
-                  <th key={h} className="px-5 py-3 text-[10px] font-bold uppercase tracking-[0.1em] text-slate-400 whitespace-nowrap">
-                    {h}
-                  </th>
-                ))}
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-slate-50">
+         {/* Table */}
+         <div className="overflow-x-auto">
+           <table className="w-full text-sm text-left">
+             <thead>
+               <tr className="bg-slate-50 border-b border-slate-200">
+                 {["Loan ID", "User ID", "Total Amount", "Remaining Balance", "Interest Rate", "Status"].map((h) => (
+                   <th key={h} className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-500 whitespace-nowrap">
+                     {h}
+                   </th>
+                 ))}
+               </tr>
+             </thead>
+             <tbody className="divide-y divide-slate-100">
               {loading ? (
                 Array.from({ length: 5 }).map((_, i) => <SkeletonRow key={i} />)
               ) : filtered.length === 0 ? (
@@ -206,43 +206,44 @@ export function LoansPage() {
                     </div>
                   </td>
                 </tr>
-              ) : (
-                filtered.map((loan, idx) => (
-                  <tr
-                    key={loan.id}
-                    className={`hover:bg-blue-50/20 transition-colors ${idx % 2 !== 0 ? "bg-slate-50/40" : ""}`}
-                  >
-                    <td className="px-5 py-3.5">
-                      <span className="font-mono text-[11px] bg-slate-100 text-slate-600 px-2 py-1 rounded-lg">
-                        {loan.loanId}
-                      </span>
-                    </td>
-                    <td className="px-5 py-3.5">
-                      <span className="font-mono text-[11px] text-slate-500 truncate max-w-[120px] block">
-                        {loan.userId}
-                      </span>
-                    </td>
-                    <td className="px-5 py-3.5 font-semibold text-slate-800 text-[13px]">
-                      {formatCurrency(loan.totalAmount)}
-                    </td>
-                    <td className="px-5 py-3.5">
-                      <span className={`text-[13px] font-semibold ${loan.remainingBalance > 0 ? "text-rose-600" : "text-emerald-600"}`}>
-                        {formatCurrency(loan.remainingBalance)}
-                      </span>
-                    </td>
-                    <td className="px-5 py-3.5 text-[12px] text-slate-600">
-                      {loan.interestRate}%
-                    </td>
-                    <td className="px-5 py-3.5">
-                      <StatusBadge status={loan.status} />
-                    </td>
-                  </tr>
-                ))
-              )}
-            </tbody>
-          </table>
-        </div>
-      </div>
+               ) : (
+                 filtered.map((loan, idx) => (
+                   <tr
+                     key={loan.id}
+                     className={`hover:bg-slate-50 transition-colors ${idx % 2 !== 0 ? "bg-slate-50/50" : ""}`}
+                   >
+                     <td className="px-6 py-4">
+                       <span className="font-mono text-xs bg-slate-100 text-slate-600 px-2 py-1 rounded-lg">
+                         {loan.loanId}
+                       </span>
+                     </td>
+                     <td className="px-6 py-4">
+                       <span className="font-mono text-xs text-slate-500 truncate max-w-[120px] block">
+                         {loan.userId}
+                       </span>
+                     </td>
+                     <td className="px-6 py-4 font-semibold text-slate-800">
+                       {formatCurrency(loan.totalAmount)}
+                     </td>
+                     <td className="px-6 py-4">
+                       <span className={`text-sm font-semibold ${loan.remainingBalance > 0 ? "text-rose-600" : "text-emerald-600"}`}>
+                         {formatCurrency(loan.remainingBalance)}
+                       </span>
+                     </td>
+                     <td className="px-6 py-4 text-sm text-slate-600">
+                       {loan.interestRate}%
+                     </td>
+                     <td className="px-6 py-4">
+                       <StatusBadge status={loan.status} />
+                     </td>
+                   </tr>
+                 ))
+               )}
+             </tbody>
+           </table>
+         </div>
+       </div>
+      
     </motion.div>
   );
 }

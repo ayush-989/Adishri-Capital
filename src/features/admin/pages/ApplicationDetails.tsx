@@ -40,8 +40,8 @@ function StatusProgress({ status }: { status: string }) {
 
   if (isRejected) {
     return (
-      <div className="flex items-center gap-2 px-4 py-3 bg-red-50 border border-red-200 rounded-xl text-red-700 font-semibold text-sm">
-        <span className="w-2 h-2 rounded-full bg-red-500 inline-block" />
+      <div className="flex items-center gap-2.5 px-4 py-3 bg-gradient-to-r from-red-50 to-red-100/50 border border-red-200/60 rounded-xl text-red-700 font-semibold text-sm shadow-sm shadow-red-200/30">
+        <span className="w-2 h-2 rounded-full bg-gradient-to-r from-red-500 to-red-600 shadow-sm shadow-red-500/30 inline-block animate-pulse" />
         Application Rejected
       </div>
     );
@@ -54,20 +54,20 @@ function StatusProgress({ status }: { status: string }) {
         const active = i === current;
         return (
           <div key={step.label} className="flex items-center">
-            <div className="flex flex-col items-center gap-1">
+            <div className="flex flex-col items-center gap-2">
               <div
-                className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold border-2 transition-colors ${
+                className={`w-9 h-9 rounded-xl flex items-center justify-center text-xs font-bold border-2 transition-all shadow-md ${
                   done
-                    ? "bg-emerald-500 border-emerald-500 text-white"
+                    ? "bg-gradient-to-r from-emerald-500 to-emerald-600 border-emerald-500 text-white shadow-emerald-200/50"
                     : active
-                    ? "bg-blue-600 border-blue-600 text-white"
-                    : "bg-white border-slate-300 text-slate-400"
+                    ? "bg-gradient-to-r from-blue-500 to-blue-600 border-blue-500 text-white shadow-blue-200/50"
+                    : "bg-white border-slate-200 text-slate-400"
                 }`}
               >
-                {done ? <CheckCircle2 size={16} /> : i + 1}
+                {done ? <CheckCircle2 size={18} /> : i + 1}
               </div>
               <span
-                className={`text-xs font-medium whitespace-nowrap ${
+                className={`text-[11px] font-semibold whitespace-nowrap ${
                   done ? "text-emerald-600" : active ? "text-blue-600" : "text-slate-400"
                 }`}
               >
@@ -76,8 +76,8 @@ function StatusProgress({ status }: { status: string }) {
             </div>
             {i < STEPS.length - 1 && (
               <div
-                className={`h-0.5 w-10 sm:w-16 mb-4 mx-1 transition-colors ${
-                  i < current ? "bg-emerald-400" : "bg-slate-200"
+                className={`h-1 w-14 sm:w-24 mb-5 mx-1 rounded-full transition-colors ${
+                  i < current ? "bg-gradient-to-r from-emerald-400 to-emerald-500" : "bg-slate-200"
                 }`}
               />
             )}
@@ -97,11 +97,11 @@ function DocImage({ url, alt }: { url?: string; alt: string }) {
       href={url}
       target="_blank"
       rel="noopener noreferrer"
-      className="relative group inline-block rounded-lg overflow-hidden border border-slate-200 h-28 w-44 shadow-sm"
+      className="relative group inline-block rounded-lg overflow-hidden border border-slate-200 h-32 w-48 shadow-sm hover:shadow-md transition-shadow"
     >
       <img src={url} alt={alt} className="object-cover w-full h-full" />
-      <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center text-white gap-1 text-xs font-medium">
-        <ExternalLink size={14} /> View
+      <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center text-white gap-1.5 text-xs font-semibold">
+        <ExternalLink size={14} /> View Full
       </div>
     </a>
   );
@@ -112,8 +112,8 @@ function DocImage({ url, alt }: { url?: string; alt: string }) {
 function InfoRow({ label, value }: { label: string; value?: string }) {
   return (
     <div>
-      <p className="text-xs text-slate-500 uppercase tracking-wide font-medium">{label}</p>
-      <p className="text-sm font-semibold text-slate-800 mt-0.5">{value || "—"}</p>
+      <p className="text-[10px] font-bold uppercase tracking-[0.1em] text-slate-400">{label}</p>
+      <p className="text-sm font-semibold text-slate-800 mt-1">{value || "—"}</p>
     </div>
   );
 }
@@ -122,7 +122,7 @@ function InfoRow({ label, value }: { label: string; value?: string }) {
 
 function SuccessBanner({ message }: { message: string }) {
   return (
-    <div className="flex items-center gap-2 text-emerald-700 bg-emerald-50 border border-emerald-200 rounded-lg px-3 py-2 text-sm font-medium">
+    <div className="flex items-center gap-2 text-emerald-700 bg-emerald-50 border border-emerald-200 rounded-lg px-3 py-2.5 text-sm font-semibold">
       <CheckCircle2 size={16} className="shrink-0" />
       {message}
     </div>
@@ -280,20 +280,20 @@ export function ApplicationDetails() {
   const isDisbursed = app.status === LOAN_STATUS.DISBURSED;
 
   return (
-    <div className="p-6 max-w-6xl mx-auto space-y-6">
+    <div className="p-6 sm:p-8 max-w-6xl mx-auto space-y-8">
 
         {/* ── Header ── */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-3.5">
             <button
               onClick={() => navigate(ROUTES.ADMIN_LEADS)}
-              className="p-2 rounded-lg hover:bg-slate-100 text-slate-600 transition-colors"
+              className="p-2.5 rounded-xl hover:bg-slate-100 text-slate-600 transition-all"
             >
               <ArrowLeft size={20} />
             </button>
             <div>
               <h1 className="text-2xl font-bold text-slate-900">Application Details</h1>
-              <p className="text-sm text-slate-500 font-mono">{app.appId}</p>
+              <p className="text-sm text-slate-500 font-mono font-medium mt-0.5">{app.appId}</p>
             </div>
           </div>
           <StatusProgress status={app.status} />

@@ -122,115 +122,115 @@ export function LeadManagement() {
   const paginated = filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
 
   return (
-    <div className="p-6 sm:p-8 space-y-5 max-w-[1400px] mx-auto">
+    <div className="p-6 sm:p-8 space-y-8 max-w-7xl mx-auto">
 
       {/* ── Header ── */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-xl font-bold text-slate-900 tracking-tight">Applications</h1>
-          <p className="text-xs text-slate-400 mt-0.5">
+          <h1 className="text-2xl font-bold text-slate-900 tracking-tight">Applications</h1>
+          <p className="text-sm text-slate-500 mt-1 font-medium">
             {loading ? "Loading…" : `${applications.length} total applications`}
           </p>
         </div>
 
         {/* Summary pills */}
         {!loading && !error && (
-          <div className="flex items-center gap-2">
-            <div className="flex items-center gap-1.5 px-3 py-1.5 bg-amber-50 border border-amber-100 rounded-xl text-xs font-semibold text-amber-700">
-              <AlertCircle size={12} />
+          <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2.5 px-3.5 py-2.5 bg-gradient-to-r from-amber-50 to-amber-100/50 border border-amber-200/60 rounded-xl text-sm font-semibold text-amber-700 shadow-sm shadow-amber-200/30">
+              <AlertCircle size={15} />
               {applications.filter(a =>
                 [LOAN_STATUS.PENDING_PAYMENT, LOAN_STATUS.PENDING_KYC, LOAN_STATUS.PENDING_APPROVAL].includes(a.status as any)
               ).length} pending
             </div>
-            <div className="flex items-center gap-1.5 px-3 py-1.5 bg-emerald-50 border border-emerald-100 rounded-xl text-xs font-semibold text-emerald-700">
-              <Users size={12} />
+            <div className="flex items-center gap-2.5 px-3.5 py-2.5 bg-gradient-to-r from-emerald-50 to-emerald-100/50 border border-emerald-200/60 rounded-xl text-sm font-semibold text-emerald-700 shadow-sm shadow-emerald-200/30">
+              <Users size={15} />
               {applications.filter(a => a.status === LOAN_STATUS.DISBURSED).length} active
             </div>
           </div>
         )}
       </div>
 
-      {/* ── Table card ── */}
-      <div className="bg-white rounded-2xl border border-slate-200/60 shadow-sm overflow-hidden">
+       {/* ── Table card ── */}
+       <div className="bg-white rounded-2xl border border-slate-200/80 shadow-sm shadow-slate-200/40 overflow-hidden">
 
-        {/* Toolbar */}
-        <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 px-5 py-4 border-b border-slate-100">
-          {/* Search */}
-          <div className="relative flex-1 max-w-xs">
-            <Search size={13} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
-            <input
-              type="text"
-              placeholder="Search name, ID, phone…"
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full h-9 pl-8 pr-3 rounded-xl border border-slate-200 bg-slate-50 text-[12px] text-slate-700 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-300 focus:bg-white transition-all"
-            />
-          </div>
+         {/* Toolbar */}
+         <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 px-6 py-4.5 border-b border-slate-100">
+           {/* Search */}
+           <div className="relative flex-1 max-w-xs">
+             <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+             <input
+               type="text"
+               placeholder="Search name, ID, phone…"
+               value={searchTerm}
+               onChange={(e) => setSearchTerm(e.target.value)}
+               className="w-full h-10 pl-9 pr-3 rounded-xl border border-slate-200/80 bg-slate-50/50 text-sm text-slate-700 font-medium placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-400 focus:bg-white transition-all"
+             />
+           </div>
 
-          {/* Filter */}
-          <div className="relative">
-            <SlidersHorizontal size={13} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" />
-            <select
-              value={statusFilter}
-              onChange={(e) => setStatusFilter(e.target.value)}
-              className="h-9 pl-8 pr-8 rounded-xl border border-slate-200 bg-slate-50 text-[12px] text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-300 appearance-none cursor-pointer transition-all"
-            >
-              {STATUS_OPTIONS.map((s) => (
-                <option key={s} value={s}>{s === "All" ? "All Statuses" : s}</option>
-              ))}
-            </select>
-          </div>
+           {/* Filter */}
+           <div className="relative">
+             <SlidersHorizontal size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" />
+             <select
+               value={statusFilter}
+               onChange={(e) => setStatusFilter(e.target.value)}
+               className="h-10 pl-9 pr-9 rounded-xl border border-slate-200/80 bg-slate-50/50 text-sm text-slate-700 font-medium focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-400 appearance-none cursor-pointer transition-all"
+             >
+               {STATUS_OPTIONS.map((s) => (
+                 <option key={s} value={s}>{s === "All" ? "All Statuses" : s}</option>
+               ))}
+             </select>
+           </div>
 
-          {filtered.length > 0 && (
-            <span className="ml-auto text-[11px] text-slate-400 font-medium shrink-0">
-              {filtered.length} of {applications.length}
-            </span>
-          )}
-        </div>
+           {filtered.length > 0 && (
+             <span className="ml-auto text-xs text-slate-500 font-semibold shrink-0">
+               {filtered.length} of {applications.length}
+             </span>
+           )}
+         </div>
 
-        {/* Table */}
-        <div className="overflow-x-auto">
-          <table className="w-full text-sm text-left">
-            <thead>
-              <tr className="bg-slate-50/80 border-b border-slate-100">
-                {["Applicant", "Loan ID", "Contact", "Applied On", "Status", "Action"].map((h) => (
-                  <th key={h} className="px-5 py-3 text-[10px] font-bold uppercase tracking-[0.1em] text-slate-400 whitespace-nowrap">
-                    {h}
-                  </th>
-                ))}
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-slate-50">
-              {loading ? (
-                Array.from({ length: 5 }).map((_, i) => <SkeletonRow key={i} />)
-              ) : error ? (
-                <tr>
-                  <td colSpan={6} className="px-5 py-16 text-center">
-                    <div className="flex flex-col items-center gap-2">
-                      <AlertCircle size={28} className="text-red-300" />
-                      <p className="text-sm font-medium text-red-500">Failed to load</p>
-                      <p className="text-xs text-slate-400">{error}</p>
-                    </div>
-                  </td>
+{/* Table */}
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm text-left">
+              <thead>
+                <tr className="bg-gradient-to-r from-slate-50 to-slate-100/50 border-b border-slate-200/80">
+                  {["Applicant", "Loan ID", "Contact", "Applied On", "Status", "Action"].map((h) => (
+                    <th key={h} className="px-6 py-4 text-[11px] font-bold uppercase tracking-[0.08em] text-slate-500 whitespace-nowrap">
+                      {h}
+                    </th>
+                  ))}
                 </tr>
-              ) : filtered.length === 0 ? (
-                <tr>
-                  <td colSpan={6} className="px-5 py-20 text-center">
-                    <div className="flex flex-col items-center gap-2 text-slate-400">
-                      <Inbox size={32} className="opacity-30" />
-                      <p className="text-sm font-medium text-slate-500">No applications found</p>
-                      <p className="text-xs">Try adjusting your search or filter</p>
-                    </div>
-                  </td>
-                </tr>
-              ) : (
-                paginated.map((app, idx) => (
-                  <tr
-                    key={app.id}
-                    className={`group hover:bg-blue-50/30 transition-colors ${idx % 2 === 0 ? "" : "bg-slate-50/40"}`}
-                  >
-                    {/* Applicant */}
-                    <td className="px-5 py-3.5">
+              </thead>
+              <tbody className="divide-y divide-slate-100/60">
+               {loading ? (
+                 Array.from({ length: 5 }).map((_, i) => <SkeletonRow key={i} />)
+               ) : error ? (
+                 <tr>
+                   <td colSpan={6} className="px-5 py-16 text-center">
+                     <div className="flex flex-col items-center gap-2.5">
+                       <AlertCircle size={32} className="text-red-300" />
+                       <p className="text-sm font-semibold text-red-500">Failed to load</p>
+                       <p className="text-xs text-slate-400 font-medium">{error}</p>
+                     </div>
+                   </td>
+                 </tr>
+               ) : filtered.length === 0 ? (
+                 <tr>
+                   <td colSpan={6} className="px-5 py-20 text-center">
+                     <div className="flex flex-col items-center gap-2.5 text-slate-400">
+                       <Inbox size={36} className="opacity-30" />
+                       <p className="text-sm font-semibold text-slate-500">No applications found</p>
+                       <p className="text-xs font-medium">Try adjusting your search or filter</p>
+                     </div>
+                   </td>
+                 </tr>
+               ) : (
+                 paginated.map((app, idx) => (
+                   <tr
+                     key={app.id}
+                     className={`group hover:bg-blue-50/30 transition-colors ${idx % 2 === 0 ? "" : "bg-slate-50/30"}`}
+                   >
+                     {/* Applicant */}
+                     <td className="px-6 py-4">
                       <div className="flex items-center gap-3">
                         <Avatar name={app.basicDetails?.fullName ?? "?"} />
                         <div>
@@ -242,70 +242,70 @@ export function LeadManagement() {
                       </div>
                     </td>
 
-                    {/* Loan ID */}
-                    <td className="px-5 py-3.5">
-                      <span className="font-mono text-[11px] bg-slate-100 text-slate-600 px-2 py-1 rounded-lg">
-                        {app.appId}
-                      </span>
-                    </td>
+                     {/* Loan ID */}
+                     <td className="px-6 py-4">
+                       <span className="font-mono text-xs bg-slate-100 text-slate-600 px-2 py-1 rounded-lg">
+                         {app.appId}
+                       </span>
+                     </td>
 
-                    {/* Contact */}
-                    <td className="px-5 py-3.5">
-                      <p className="text-[12px] text-slate-700 font-medium">{app.basicDetails?.phone ?? "—"}</p>
-                    </td>
+                     {/* Contact */}
+                     <td className="px-6 py-4">
+                       <p className="text-sm text-slate-700 font-medium">{app.basicDetails?.phone ?? "—"}</p>
+                     </td>
 
-                    {/* Date */}
-                    <td className="px-5 py-3.5">
-                      <p className="text-[12px] text-slate-500">
-                        {app.createdAt ? format(new Date(app.createdAt), "dd MMM yyyy") : "—"}
-                      </p>
-                    </td>
+                     {/* Date */}
+                     <td className="px-6 py-4">
+                       <p className="text-sm text-slate-500">
+                         {app.createdAt ? format(new Date(app.createdAt), "dd MMM yyyy") : "—"}
+                       </p>
+                     </td>
 
-                    {/* Status */}
-                    <td className="px-5 py-3.5">
+                     {/* Status */}
+                     <td className="px-6 py-4">
                       <Badge variant={STATUS_VARIANT[app.status] ?? "neutral"}>
                         {STATUS_LABEL[app.status] ?? app.status}
                       </Badge>
                     </td>
 
-                    {/* Action */}
-                    <td className="px-5 py-3.5">
-                      <Link
-                        to={`${ROUTES.ADMIN_APPLICATION}/${app.id}`}
-                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-[11px] font-semibold text-blue-600 bg-blue-50 hover:bg-blue-100 border border-blue-100 transition-all hover:shadow-sm group-hover:border-blue-200"
-                      >
-                        <Eye size={12} />
-                        Review
-                      </Link>
-                    </td>
-                  </tr>
+                     {/* Action */}
+                     <td className="px-6 py-4">
+                       <Link
+                         to={`${ROUTES.ADMIN_APPLICATION}/${app.id}`}
+                         className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold text-blue-600 bg-blue-50 hover:bg-blue-100 border border-blue-100 transition-all hover:shadow-sm group-hover:border-blue-200"
+                       >
+                         <Eye size={13} />
+                         Review
+                       </Link>
+                     </td>
+                   </tr>
                 ))
               )}
             </tbody>
           </table>
         </div>
 
-        {/* Footer */}
-        {!loading && filtered.length > 0 && (
-          <div className="px-5 py-3 bg-slate-50/60 border-t border-slate-100 flex items-center justify-between">
-            <p className="text-[11px] text-slate-400">
-              Showing <span className="font-semibold text-slate-600">{Math.min(page * PAGE_SIZE, filtered.length)}</span> of{" "}
-              <span className="font-semibold text-slate-600">{filtered.length}</span> applications
-            </p>
-            <div className="flex items-center gap-3">
-              {(searchTerm || statusFilter !== "All") && (
-                <button
-                  onClick={() => { setSearchTerm(""); setStatusFilter("All"); setPage(1); }}
-                  className="text-[11px] font-semibold text-blue-500 hover:text-blue-700 transition-colors"
-                >
-                  Clear filters
-                </button>
-              )}
-              <Pagination page={page} total={filtered.length} pageSize={PAGE_SIZE} onChange={setPage} />
-            </div>
-          </div>
-        )}
-      </div>
+{/* Footer */}
+         {!loading && filtered.length > 0 && (
+           <div className="px-6 py-4 bg-slate-50/50 border-t border-slate-100 flex items-center justify-between">
+             <p className="text-xs text-slate-500 font-medium">
+               Showing <span className="font-semibold text-slate-700">{Math.min(page * PAGE_SIZE, filtered.length)}</span> of{" "}
+               <span className="font-semibold text-slate-700">{filtered.length}</span> applications
+             </p>
+             <div className="flex items-center gap-3">
+               {(searchTerm || statusFilter !== "All") && (
+                 <button
+                   onClick={() => { setSearchTerm(""); setStatusFilter("All"); setPage(1); }}
+                   className="text-xs font-semibold text-blue-600 hover:text-blue-700 hover:underline transition-colors"
+                 >
+                   Clear filters
+                 </button>
+               )}
+               <Pagination page={page} total={filtered.length} pageSize={PAGE_SIZE} onChange={setPage} />
+             </div>
+           </div>
+         )}
+       </div>
     </div>
   );
 }

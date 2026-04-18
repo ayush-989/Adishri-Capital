@@ -15,11 +15,11 @@ export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 const Button = forwardRef<HTMLButtonElement, ButtonProps>(
   ({ className, variant = "primary", size = "md", isLoading, children, ...props }, ref) => {
     const variants = {
-      primary: "bg-blue-600 text-white hover:bg-blue-700 shadow-sm border border-transparent",
-      secondary: "bg-slate-100 text-slate-900 hover:bg-slate-200 border border-transparent",
-      outline: "bg-transparent border border-slate-300 text-slate-700 hover:bg-slate-50",
-      ghost: "bg-transparent border-transparent text-slate-700 hover:bg-slate-100",
-      danger: "bg-red-600 text-white hover:bg-red-700 shadow-sm border border-transparent",
+      primary: "bg-gradient-to-r from-blue-600 to-blue-700 text-white hover:from-blue-700 hover:to-blue-800 shadow-md shadow-blue-500/20 hover:shadow-blue-500/30 border-0",
+      secondary: "bg-slate-100 text-slate-700 hover:bg-slate-200 border-0 font-medium",
+      outline: "bg-transparent border border-slate-200 text-slate-600 hover:bg-slate-50 hover:border-slate-300 hover:text-slate-800",
+      ghost: "bg-transparent border-0 text-slate-600 hover:bg-slate-100 hover:text-slate-900",
+      danger: "bg-gradient-to-r from-red-500 to-red-600 text-white hover:from-red-600 hover:to-red-700 shadow-md shadow-red-500/20 hover:shadow-red-500/30 border-0",
     };
 
     const sizes = {
@@ -32,7 +32,7 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
       <button
         ref={ref}
         className={cn(
-          "inline-flex items-center justify-center rounded-lg font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 disabled:pointer-events-none disabled:opacity-50",
+          "inline-flex items-center justify-center rounded-xl font-semibold transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/50 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 active:scale-[0.98]",
           variants[variant],
           sizes[size],
           className

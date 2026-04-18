@@ -47,7 +47,7 @@ const LOAN_STATUS_CFG: Record<LoanStatus, { dot: string; badge: string; label: s
 function LoanStatusBadge({ status }: { status: LoanStatus }) {
   const cfg = LOAN_STATUS_CFG[status] ?? LOAN_STATUS_CFG.closed;
   return (
-    <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-semibold border ${cfg.badge}`}>
+    <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold border ${cfg.badge}`}>
       <span className={`w-1.5 h-1.5 rounded-full ${cfg.dot}`} />
       {cfg.label}
     </span>
@@ -59,35 +59,35 @@ function LoanStatusBadge({ status }: { status: LoanStatus }) {
 function EmiStatus({ txn }: { txn: Transaction }) {
   if (txn.status === "rejected")
     return (
-      <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-red-600">
-        <XCircle size={12} /> Rejected
+      <span className="inline-flex items-center gap-1 text-xs font-semibold text-red-600">
+        <XCircle size={13} /> Rejected
       </span>
     );
   if (txn.verified)
     return (
-      <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-emerald-600">
-        <CheckCircle2 size={12} /> Paid
+      <span className="inline-flex items-center gap-1 text-xs font-semibold text-emerald-600">
+        <CheckCircle2 size={13} /> Paid
       </span>
     );
   return (
-    <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-amber-600">
-      <Clock size={12} /> Pending
+    <span className="inline-flex items-center gap-1 text-xs font-semibold text-amber-600">
+      <Clock size={13} /> Pending
     </span>
   );
 }
 
-// ─── Stat pill ────────────────────────────────────────────────────────────────
-
-function StatPill({ icon, label, value, color }: {
-  icon: React.ReactNode; label: string; value: string; color: string;
+function StatPill({ icon, label, value, bg, border }: {
+  icon: React.ReactNode; label: string; value: string; bg: string; border: string;
 }) {
   return (
-    <div className="flex flex-col gap-1">
-      <div className={`flex items-center gap-1.5 ${color}`}>
+    <div className={`${bg} ${border} rounded-2xl px-5 py-4 border`}>
+      <div className="flex items-center gap-1.5 mb-1">
         {icon}
-        <span className="text-[10px] font-bold uppercase tracking-wider">{label}</span>
+        <span className="text-xs font-bold uppercase tracking-wider text-slate-500">{label}</span>
       </div>
-      <p className="text-[18px] font-black text-slate-900 tabular-nums">{value}</p>
+      <p className={`text-xl font-bold text-slate-800`}>
+        {value}
+      </p>
     </div>
   );
 }
@@ -133,19 +133,19 @@ function LoanCard({ loan }: { loan: Loan }) {
   const totalPaid   = txns.filter((t) => t.verified).reduce((s, t) => s + t.amount, 0);
 
   return (
-    <div className="bg-white rounded-2xl border border-slate-200/60 shadow-sm overflow-hidden">
+    <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
 
       {/* Loan header */}
       <div className="p-5">
         <div className="flex items-start justify-between gap-4 mb-4">
           <div>
             <div className="flex items-center gap-2 mb-1">
-              <span className="font-mono text-[12px] bg-slate-100 text-slate-600 px-2 py-0.5 rounded-lg">
+              <span className="font-mono text-xs bg-slate-100 text-slate-600 px-2 py-0.5 rounded-lg">
                 {loan.loanId}
               </span>
               <LoanStatusBadge status={loan.status} />
             </div>
-            <p className="text-[11px] text-slate-400">
+            <p className="text-xs text-slate-500">
               Disbursed {loan.disbursedAt
                 ? new Date(loan.disbursedAt).toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" })
                 : "—"}
@@ -153,7 +153,7 @@ function LoanCard({ loan }: { loan: Loan }) {
           </div>
           <button
             onClick={handleExpand}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-[11px] font-semibold text-blue-600 bg-blue-50 hover:bg-blue-100 border border-blue-100 transition-all"
+            className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold text-blue-600 bg-blue-50 hover:bg-blue-100 border border-blue-100 transition-all hover:shadow-sm"
           >
             {loading ? (
               <span className="w-3 h-3 border-2 border-blue-400/40 border-t-blue-500 rounded-full animate-spin" />
@@ -167,41 +167,45 @@ function LoanCard({ loan }: { loan: Loan }) {
         </div>
 
         {/* Loan stats grid */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 pt-4 border-t border-slate-100">
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 pt-4 border-t border-slate-200">
           <StatPill
-            icon={<Banknote size={11} />}
+            icon={<Banknote size={14} />}
             label="Principal"
             value={formatCurrency(loan.totalAmount)}
-            color="text-blue-500"
+            bg="bg-blue-50"
+            border="border-blue-100"
           />
           <StatPill
-            icon={<Activity size={11} />}
+            icon={<Activity size={14} />}
             label="Total Payable"
             value={formatCurrency(loan.totalPayable)}
-            color="text-violet-500"
+            bg="bg-violet-50"
+            border="border-violet-100"
           />
           <StatPill
-            icon={<CheckCircle2 size={11} />}
+            icon={<CheckCircle2 size={14} />}
             label="Paid"
             value={formatCurrency(totalPaid)}
-            color="text-emerald-500"
+            bg="bg-emerald-50"
+            border="border-emerald-100"
           />
           <StatPill
-            icon={<TrendingDown size={11} />}
+            icon={<TrendingDown size={14} />}
             label="Remaining"
             value={formatCurrency(loan.remainingBalance)}
-            color={loan.remainingBalance > 0 ? "text-rose-500" : "text-emerald-500"}
+            bg={loan.remainingBalance > 0 ? "bg-rose-50 border border-rose-100" : "bg-slate-50 border border-slate-200"}
+            border={loan.remainingBalance > 0 ? "border-rose-100" : "border-slate-200"}
           />
         </div>
 
         {/* Progress bar */}
         {loan.totalPayable > 0 && (
           <div className="mt-4">
-            <div className="flex justify-between text-[10px] text-slate-400 mb-1">
+            <div className="flex justify-between text-xs text-slate-500 mb-1.5">
               <span>Repayment progress</span>
               <span>{Math.round((totalPaid / loan.totalPayable) * 100)}%</span>
             </div>
-            <div className="h-1.5 w-full rounded-full bg-slate-100 overflow-hidden">
+            <div className="h-2 w-full rounded-full bg-slate-100 overflow-hidden">
               <motion.div
                 className="h-full rounded-full bg-emerald-500"
                 initial={{ width: 0 }}
@@ -235,16 +239,16 @@ function LoanCard({ loan }: { loan: Loan }) {
                 </thead>
                 <tbody className="divide-y divide-slate-50">
                   {emiRows.map(({ txn, balanceBefore, balanceAfter }, i) => (
-                    <tr
-                      key={txn.id}
-                      className={`transition-colors ${
-                        txn.verified
-                          ? i % 2 === 0 ? "hover:bg-emerald-50/20" : "bg-slate-50/30 hover:bg-emerald-50/20"
-                          : "bg-amber-50/20 hover:bg-amber-50/40"
-                      }`}
-                    >
-                      <td className="px-4 py-3 text-[11px] font-bold text-slate-400">{i + 1}</td>
-                      <td className="px-4 py-3 text-[12px] text-slate-600">
+                   <tr
+                     key={txn.id}
+                     className={`transition-colors ${
+                       txn.verified
+                         ? i % 2 === 0 ? "hover:bg-emerald-50/20" : "bg-slate-50/30 hover:bg-emerald-50/20"
+                         : "bg-amber-50/20 hover:bg-amber-50/40"
+                     }`}
+                   >
+                       <td className="px-4 py-3 text-xs font-bold text-slate-500">{i + 1}</td>
+                       <td className="px-4 py-3 text-sm text-slate-600">
                         {txn.createdAt
                           ? new Date(txn.createdAt).toLocaleDateString("en-IN", {
                               day: "2-digit", month: "short", year: "numeric",
@@ -347,90 +351,90 @@ export function UserDetails() {
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3 }}
-      className="p-6 sm:p-8 space-y-5 max-w-[1400px] mx-auto"
+      className="p-6 sm:p-8 space-y-8 max-w-7xl mx-auto"
     >
-      {/* ── Header ── */}
-      <div className="flex items-center gap-3">
-        <button
-          onClick={() => navigate(ROUTES.ADMIN_USERS)}
-          className="p-2 rounded-xl text-slate-500 hover:bg-slate-100 transition-colors"
-        >
-          <ArrowLeft size={18} />
-        </button>
-        <div>
-          <div className="flex items-center gap-2 text-xs text-slate-400 mb-0.5">
-            <span className="hover:text-blue-500 cursor-pointer transition-colors" onClick={() => navigate(ROUTES.ADMIN_DASHBOARD)}>
-              Dashboard
-            </span>
-            <span>/</span>
-            <span className="hover:text-blue-500 cursor-pointer transition-colors" onClick={() => navigate(ROUTES.ADMIN_USERS)}>
-              Users
-            </span>
-            <span>/</span>
-            <span className="text-slate-700 font-medium truncate max-w-[120px]">
-              {user.email?.split("@")[0] ?? id}
-            </span>
-          </div>
-          <h1 className="text-xl font-semibold text-slate-900 tracking-tight">User Profile</h1>
-        </div>
-      </div>
+       {/* ── Header ── */}
+       <div className="flex items-center gap-3.5">
+         <button
+           onClick={() => navigate(ROUTES.ADMIN_USERS)}
+           className="p-2.5 rounded-xl text-slate-500 hover:bg-slate-100 transition-all"
+         >
+           <ArrowLeft size={18} />
+         </button>
+         <div>
+           <div className="flex items-center gap-2 text-xs text-slate-500 mb-1 font-medium">
+             <span className="hover:text-blue-600 cursor-pointer transition-colors" onClick={() => navigate(ROUTES.ADMIN_DASHBOARD)}>
+               Dashboard
+             </span>
+             <span>/</span>
+             <span className="hover:text-blue-600 cursor-pointer transition-colors" onClick={() => navigate(ROUTES.ADMIN_USERS)}>
+               Users
+             </span>
+             <span>/</span>
+             <span className="text-slate-700 font-semibold truncate max-w-[120px]">
+               {user.email?.split("@")[0] ?? id}
+             </span>
+           </div>
+           <h1 className="text-2xl font-bold text-slate-900 tracking-tight">User Profile</h1>
+         </div>
+       </div>
 
       {/* ── Profile card ── */}
-      <div className="bg-white rounded-2xl border border-slate-200/60 shadow-sm p-6">
+      <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6">
         <div className="flex flex-col sm:flex-row items-start sm:items-center gap-5 mb-6">
           <Avatar email={user.email} size="lg" />
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2 flex-wrap">
-              <h2 className="text-lg font-bold text-slate-900">
+              <h2 className="text-lg font-bold text-slate-800">
                 {user.email?.split("@")[0] ?? "Unknown User"}
               </h2>
               {user.role === "admin" ? (
-                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-blue-50 text-blue-700 border border-blue-200">
+                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-bold bg-blue-50 text-blue-700 border border-blue-200">
                   <Shield size={9} /> Admin
                 </span>
               ) : (
-                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-slate-50 text-slate-600 border border-slate-200">
+                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-bold bg-slate-50 text-slate-600 border border-slate-200">
                   <UserCircle size={9} /> Borrower
                 </span>
               )}
             </div>
             <div className="flex flex-wrap gap-4 mt-2">
               {user.email && (
-                <div className="flex items-center gap-1.5 text-[12px] text-slate-500">
-                  <Mail size={12} className="text-slate-400" />
+                <div className="flex items-center gap-1.5 text-sm text-slate-500">
+                  <Mail size={13} className="text-slate-400" />
                   {user.email}
                 </div>
               )}
               {user.phoneNumber && (
-                <div className="flex items-center gap-1.5 text-[12px] text-slate-500">
-                  <Phone size={12} className="text-slate-400" />
+                <div className="flex items-center gap-1.5 text-sm text-slate-500">
+                  <Phone size={13} className="text-slate-400" />
                   {user.phoneNumber}
                 </div>
               )}
             </div>
-            <p className="text-[10px] text-slate-400 font-mono mt-1">UID: {user.uid}</p>
+            <p className="text-xs text-slate-400 font-mono mt-1">UID: {user.uid}</p>
           </div>
         </div>
 
         {/* Financial summary */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 pt-5 border-t border-slate-100">
-          <div className="bg-blue-50 rounded-xl p-4">
-            <p className="text-[10px] font-bold uppercase tracking-wider text-blue-400 mb-1">Total Loans</p>
-            <p className="text-2xl font-black text-blue-700">{loans.length}</p>
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 pt-5 border-t border-slate-200">
+          <div className="bg-blue-50 rounded-2xl p-4 border border-blue-100">
+            <p className="text-xs font-bold uppercase tracking-wider text-blue-500 mb-1">Total Loans</p>
+            <p className="text-2xl font-bold text-blue-700">{loans.length}</p>
           </div>
-          <div className="bg-emerald-50 rounded-xl p-4">
-            <p className="text-[10px] font-bold uppercase tracking-wider text-emerald-400 mb-1">Active Loans</p>
-            <p className="text-2xl font-black text-emerald-700">{activeLoans}</p>
+          <div className="bg-emerald-50 rounded-2xl p-4 border border-emerald-100">
+            <p className="text-xs font-bold uppercase tracking-wider text-emerald-500 mb-1">Active Loans</p>
+            <p className="text-2xl font-bold text-emerald-700">{activeLoans}</p>
           </div>
-          <div className="bg-violet-50 rounded-xl p-4">
-            <p className="text-[10px] font-bold uppercase tracking-wider text-violet-400 mb-1">Total Borrowed</p>
-            <p className="text-xl font-black text-violet-700">{formatCurrency(totalBorrowed)}</p>
+          <div className="bg-violet-50 rounded-2xl p-4 border border-violet-100">
+            <p className="text-xs font-bold uppercase tracking-wider text-violet-500 mb-1">Total Borrowed</p>
+            <p className="text-xl font-bold text-violet-700">{formatCurrency(totalBorrowed)}</p>
           </div>
-          <div className={`${totalRemaining > 0 ? "bg-rose-50" : "bg-slate-50"} rounded-xl p-4`}>
-            <p className={`text-[10px] font-bold uppercase tracking-wider mb-1 ${totalRemaining > 0 ? "text-rose-400" : "text-slate-400"}`}>
+          <div className={`${totalRemaining > 0 ? "bg-rose-50 border border-rose-100" : "bg-slate-50 border border-slate-200"} rounded-2xl p-4`}>
+            <p className={`text-xs font-bold uppercase tracking-wider mb-1 ${totalRemaining > 0 ? "text-rose-500" : "text-slate-500"}`}>
               Remaining
             </p>
-            <p className={`text-xl font-black ${totalRemaining > 0 ? "text-rose-700" : "text-slate-500"}`}>
+            <p className={`text-xl font-bold ${totalRemaining > 0 ? "text-rose-700" : "text-slate-700"}`}>
               {formatCurrency(totalRemaining)}
             </p>
           </div>
@@ -439,12 +443,12 @@ export function UserDetails() {
 
       {/* ── Loans section ── */}
       <div>
-        <h2 className="text-[13px] font-bold text-slate-700 uppercase tracking-wider mb-3">
+        <h2 className="text-sm font-bold text-slate-800 uppercase tracking-wider mb-4">
           Loan History ({loans.length})
         </h2>
 
         {loans.length === 0 ? (
-          <div className="bg-white rounded-2xl border border-slate-200/60 shadow-sm flex flex-col items-center justify-center py-16 gap-3 text-slate-400">
+          <div className="bg-white rounded-2xl border border-slate-200 shadow-sm flex flex-col items-center justify-center py-16 gap-3 text-slate-400">
             <Inbox size={32} className="opacity-30" />
             <p className="text-sm font-medium text-slate-500">No loans found for this user</p>
           </div>
